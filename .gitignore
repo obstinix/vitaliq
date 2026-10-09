@@ -1,0 +1,29 @@
+# Dependencies
+/vendor/
+/tools/d3-bundle/node_modules/
+
+# Local configuration and secrets
+/.env
+/.env.*
+!/.env.example
+
+# Runtime output
+/storage/logs/*
+!/storage/logs/.gitkeep
+/storage/mail/*
+!/storage/mail/.gitkeep
+/storage/cache/*
+!/storage/cache/.gitkeep
+/build/
+/.phpunit.cache/
+/.phpunit.result.cache
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Assistant tooling (local only)
+/CLAUDE.md
+/.claude/

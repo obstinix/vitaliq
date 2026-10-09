@@ -1,0 +1,34 @@
+{
+    "name": "obstinix/vitaliq",
+    "description": "Vitaliq: COVID-19 public-health information and testing management (STQA project).",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.2",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-mbstring": "*",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Vitaliq\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Vitaliq\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test:unit": "phpunit --testsuite unit",
+        "lint": "@php bin/lint.php"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12"
+    }
+}

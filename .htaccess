@@ -1,0 +1,19 @@
+# Safety net for installs where the whole repository sits under the web root
+# (for example C:\xampp\htdocs\vitaliq). Requests are sent into public/ and
+# nothing else in the repository (.env, src/, database/, storage/) is served.
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(\.|src/|views/|database/|storage/|bin/|tests/|vendor/|docs/|tools/) - [F,L]
+    RewriteCond %{REQUEST_URI} !/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>
+
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
