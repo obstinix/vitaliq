@@ -1,0 +1,21 @@
+# Apache (e.g. XAMPP) configuration for the public web root.
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Serve real asset files directly; route everything else to index.php.
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^assets/ - [L]
+    RewriteRule ^ index.php [L,QSA]
+</IfModule>
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(css|js|woff2|svg|png|json)$">
+        Header set Cache-Control "public, max-age=604800"
+    </FilesMatch>
+</IfModule>
+
+# Never serve dotfiles or the dev-server router script.
+<FilesMatch "^(\.|router\.php$)">
+    Require all denied
+</FilesMatch>
