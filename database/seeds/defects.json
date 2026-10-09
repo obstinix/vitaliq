@@ -1,0 +1,60 @@
+[
+ {
+  "origin": "demo",
+  "title": "Example: notification bell count does not update in a background tab",
+  "description": "Demonstration record showing how a defect is written up. It is not a real defect: polling deliberately pauses while a tab is hidden and resumes when the tab becomes visible.",
+  "severity": "trivial",
+  "priority": "low",
+  "module": "Notifications",
+  "steps": "1. Sign in as an administrator.\n2. Switch to another tab for two minutes while a patient submits a request.\n3. Return to the Vitaliq tab.",
+  "expected": "The count updates as soon as the tab is visible again.",
+  "actual": "Example only.",
+  "status": "closed",
+  "resolution": "Demonstration record. Behaviour is by design and documented in docs/ARCHITECTURE.md.",
+  "resolved_on": "2026-10-10",
+  "found_on": "2026-10-10"
+ },
+ {
+  "origin": "demo",
+  "title": "Example: request for SMS notification when results are released",
+  "description": "Demonstration record of an enhancement request raised from community feedback. No SMS gateway is configured in this project.",
+  "severity": "minor",
+  "priority": "medium",
+  "module": "Notifications",
+  "steps": "1. Release a result for a patient.\n2. Check the patient's phone.",
+  "expected": "An SMS is sent (if an SMS gateway were configured).",
+  "actual": "Only an in-app notification is created.",
+  "status": "open",
+  "found_on": "2026-10-10"
+ },
+ {
+  "origin": "development_testing",
+  "title": "Catalogue sync silently skipped 5 test cases with duplicate codes",
+  "description": "The regex cases for the 'required field' rule and the manual testing-request cases both used the TC-REQ- prefix. QaService::syncCatalogue() skips codes that already exist, so five manual cases (TC-REQ-001 to TC-REQ-005) were never loaded and no error was shown.",
+  "severity": "major",
+  "priority": "high",
+  "module": "STQA lab",
+  "steps": "1. Run php bin/seed.php on an empty database.\n2. Compare the seeder's reported case count with the number of entries in database/qa/regex-cases.json and manual-cases.json.",
+  "expected": "151 cases loaded (115 regex + 36 manual), or an error naming the duplicate code.",
+  "actual": "146 cases loaded; the duplicates were dropped without any message.",
+  "status": "resolved",
+  "resolution": "Renamed the required-field regex cases to TC-RQD-nnn and made syncCatalogue() throw on a repeated code within the catalogue files. Covered by tests/Integration/QaServiceTest.",
+  "resolved_on": "2026-10-10",
+  "found_on": "2026-10-10"
+ },
+ {
+  "origin": "development_testing",
+  "title": "Ct value rule accepted 45.1–45.9 although the limit is 45",
+  "description": "The ct_value pattern ^(?:[0-9]|[1-3][0-9]|4[0-5])(?:\\.[0-9])?$ allows a decimal after 45, so 45.9 passed validation. The test_results table has CHECK (ct_value <= 45), so saving such a result would have failed with a database error instead of a field message.",
+  "severity": "minor",
+  "priority": "medium",
+  "module": "Results",
+  "steps": "1. Run the regex suite (php bin/qa.php run).\n2. Look at case TC-CT-004 (input 45.9, expected Rejected).",
+  "expected": "45.9 is rejected with 'Ct value is not in the expected format'.",
+  "actual": "Regex suite run #1 recorded 'Accepted by the validator'.",
+  "status": "resolved",
+  "resolution": "Pattern changed to ^(?:(?:[0-9]|[1-3][0-9]|4[0-4])(?:\\.[0-9])?|45(?:\\.0)?)$. TC-CT-004 passes in the next run; unit test RulesTest covers 45, 45.0 and 45.9.",
+  "resolved_on": "2026-10-10",
+  "found_on": "2026-10-10"
+ }
+]
