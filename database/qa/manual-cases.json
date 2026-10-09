@@ -1,0 +1,326 @@
+[
+ {
+  "code": "TC-AUTH-001",
+  "module": "Authentication",
+  "title": "Registration creates an account and a patient record",
+  "type": "functional",
+  "preconditions": "Email and mobile not yet registered",
+  "input": "Submit the registration form with valid details",
+  "expected": "User and patient rows exist; the user is signed in and sees the patient dashboard"
+ },
+ {
+  "code": "TC-AUTH-002",
+  "module": "Authentication",
+  "title": "Duplicate email is rejected",
+  "type": "negative",
+  "preconditions": "An account exists for the email",
+  "input": "Register again with the same email (any letter case)",
+  "expected": "Form re-displays with an 'already exists' error; no new rows"
+ },
+ {
+  "code": "TC-AUTH-003",
+  "module": "Authentication",
+  "title": "Duplicate mobile number is rejected",
+  "type": "negative",
+  "preconditions": "An account uses the mobile number",
+  "input": "Register with a different email and the same mobile",
+  "expected": "Mobile field error; no new rows"
+ },
+ {
+  "code": "TC-AUTH-004",
+  "module": "Authentication",
+  "title": "Valid credentials sign in",
+  "type": "positive",
+  "preconditions": "Active account",
+  "input": "Sign in with the correct email and password",
+  "expected": "Redirect to the role's home page; session id regenerated"
+ },
+ {
+  "code": "TC-AUTH-005",
+  "module": "Authentication",
+  "title": "Wrong password shows a generic error",
+  "type": "negative",
+  "preconditions": "Active account",
+  "input": "Sign in with a wrong password",
+  "expected": "Message does not reveal whether the email exists; not signed in"
+ },
+ {
+  "code": "TC-AUTH-006",
+  "module": "Authentication",
+  "title": "Account sign-in is limited after 5 failures",
+  "type": "security",
+  "preconditions": "Active account",
+  "input": "Fail sign-in 5 times, then use the correct password",
+  "expected": "Attempt refused with 'Too many sign-in attempts' for 15 minutes"
+ },
+ {
+  "code": "TC-AUTH-007",
+  "module": "Authentication",
+  "title": "Logout ends the session",
+  "type": "functional",
+  "preconditions": "Signed in",
+  "input": "Sign out, then open /patient",
+  "expected": "Redirected to sign-in"
+ },
+ {
+  "code": "TC-AUTH-008",
+  "module": "Authentication",
+  "title": "Reset link expires after 30 minutes",
+  "type": "security",
+  "preconditions": "Reset link issued",
+  "input": "Use the link 31 minutes later",
+  "expected": "Link unavailable page; password unchanged"
+ },
+ {
+  "code": "TC-AUTH-009",
+  "module": "Authentication",
+  "title": "Reset link works only once",
+  "type": "security",
+  "preconditions": "Reset link issued",
+  "input": "Set a password, then use the same link again",
+  "expected": "Second use refused"
+ },
+ {
+  "code": "TC-AUTH-010",
+  "module": "Authentication",
+  "title": "Forgot-password response does not reveal accounts",
+  "type": "security",
+  "preconditions": "None",
+  "input": "Request a reset for a registered and an unregistered email",
+  "expected": "Identical confirmation for both"
+ },
+ {
+  "code": "TC-AUTHZ-001",
+  "module": "Authorisation",
+  "title": "Patient cannot open the admin dashboard",
+  "type": "security",
+  "preconditions": "Signed in as a patient",
+  "input": "Open /admin",
+  "expected": "HTTP 403 page"
+ },
+ {
+  "code": "TC-AUTHZ-002",
+  "module": "Authorisation",
+  "title": "Patient cannot view another patient's request",
+  "type": "security",
+  "preconditions": "Two patient accounts with requests",
+  "input": "Patient A opens /patient/requests/{id of B}",
+  "expected": "HTTP 404; no data from B shown"
+ },
+ {
+  "code": "TC-AUTHZ-003",
+  "module": "Authorisation",
+  "title": "Phlebotomist cannot record another phlebotomist's collection",
+  "type": "security",
+  "preconditions": "Request assigned to phlebotomist X",
+  "input": "Phlebotomist Y posts to /staff/tasks/{id}/collect",
+  "expected": "HTTP 404; status unchanged"
+ },
+ {
+  "code": "TC-AUTHZ-004",
+  "module": "Authorisation",
+  "title": "Guest confirmation page is limited to the submitting session",
+  "type": "security",
+  "preconditions": "A guest request exists",
+  "input": "Open /test/confirmation/{ref} in a new session",
+  "expected": "HTTP 404"
+ },
+ {
+  "code": "TC-REQ-001",
+  "module": "Testing requests",
+  "title": "Guest request is saved with a unique reference",
+  "type": "functional",
+  "preconditions": "None",
+  "input": "Submit the new-patient form",
+  "expected": "Patient, request, symptoms and history rows created; reference matches VQ-YYMMDD-XXXXX"
+ },
+ {
+  "code": "TC-REQ-002",
+  "module": "Testing requests",
+  "title": "Existing patient request uses saved details",
+  "type": "functional",
+  "preconditions": "Signed in as a patient",
+  "input": "Submit the request form (no personal fields)",
+  "expected": "Request linked to the account's patient record"
+ },
+ {
+  "code": "TC-REQ-003",
+  "module": "Testing requests",
+  "title": "Repeated submission of one form creates one request",
+  "type": "functional",
+  "preconditions": "None",
+  "input": "Submit the same form token twice",
+  "expected": "One request; the repeat shows the first confirmation"
+ },
+ {
+  "code": "TC-REQ-004",
+  "module": "Testing requests",
+  "title": "Second active request of the same test type is refused",
+  "type": "negative",
+  "preconditions": "Patient has an active RT-PCR request",
+  "input": "Request another RT-PCR test",
+  "expected": "Validation message; no new request"
+ },
+ {
+  "code": "TC-REQ-005",
+  "module": "Testing requests",
+  "title": "Preferred date in the past is refused",
+  "type": "boundary",
+  "preconditions": "None",
+  "input": "Submit with yesterday as the preferred date",
+  "expected": "Preferred date error"
+ },
+ {
+  "code": "TC-WF-001",
+  "module": "Workflow",
+  "title": "Full workflow from submission to released result",
+  "type": "functional",
+  "preconditions": "Active phlebotomist exists",
+  "input": "Assign, collect, start processing, record result, release",
+  "expected": "Each status recorded in history with actor; patient notified; result visible only after release"
+ },
+ {
+  "code": "TC-WF-002",
+  "module": "Workflow",
+  "title": "Invalid status transition is refused on the server",
+  "type": "security",
+  "preconditions": "Request in 'submitted'",
+  "input": "Attempt to release a result directly",
+  "expected": "Workflow error; status unchanged"
+ },
+ {
+  "code": "TC-WF-003",
+  "module": "Workflow",
+  "title": "Patient cannot cancel after sample collection",
+  "type": "negative",
+  "preconditions": "Request in 'sample_collected'",
+  "input": "Patient posts to cancel",
+  "expected": "Error message; status unchanged"
+ },
+ {
+  "code": "TC-WF-004",
+  "module": "Workflow",
+  "title": "Reassignment keeps exactly one current assignment",
+  "type": "functional",
+  "preconditions": "Request assigned",
+  "input": "Reassign to another phlebotomist",
+  "expected": "Old assignment ended; exactly one current assignment"
+ },
+ {
+  "code": "TC-RPT-001",
+  "module": "Reports",
+  "title": "Search by mobile number and date range",
+  "type": "functional",
+  "preconditions": "Requests on several dates",
+  "input": "Filter by partial mobile and a date range",
+  "expected": "Only matching requests listed; count correct"
+ },
+ {
+  "code": "TC-RPT-002",
+  "module": "Reports",
+  "title": "CSV export neutralises spreadsheet formulas",
+  "type": "security",
+  "preconditions": "A value starting with = exists",
+  "input": "Export CSV",
+  "expected": "Cell is prefixed with an apostrophe"
+ },
+ {
+  "code": "TC-NOTIF-001",
+  "module": "Notifications",
+  "title": "New request notifies administrators and can be marked read",
+  "type": "functional",
+  "preconditions": "Active admin",
+  "input": "Submit a request; admin marks the notification read",
+  "expected": "Unread count rises then falls; read time stored"
+ },
+ {
+  "code": "TC-COM-001",
+  "module": "Comments",
+  "title": "Comment is hidden until approved and shown escaped",
+  "type": "security",
+  "preconditions": "None",
+  "input": "Submit a comment containing <b>hi</b>; approve it",
+  "expected": "Not public while pending; after approval shown as literal text"
+ },
+ {
+  "code": "TC-COM-002",
+  "module": "Comments",
+  "title": "Honeypot submission is discarded",
+  "type": "security",
+  "preconditions": "None",
+  "input": "Submit with the hidden website field filled",
+  "expected": "Success shown; nothing stored"
+ },
+ {
+  "code": "TC-SEC-001",
+  "module": "Security",
+  "title": "SQL injection in report filters is harmless",
+  "type": "security",
+  "preconditions": "Signed in as admin",
+  "input": "Search name = ' OR 1=1 --",
+  "expected": "No error; no rows unless a name literally contains the text"
+ },
+ {
+  "code": "TC-SEC-002",
+  "module": "Security",
+  "title": "POST without a CSRF token is refused",
+  "type": "security",
+  "preconditions": "None",
+  "input": "POST /login without _token",
+  "expected": "HTTP 419"
+ },
+ {
+  "code": "TC-SEC-003",
+  "module": "Security",
+  "title": "Security headers are sent",
+  "type": "security",
+  "preconditions": "None",
+  "input": "Request any page",
+  "expected": "CSP, X-Content-Type-Options, X-Frame-Options and Referrer-Policy present"
+ },
+ {
+  "code": "TC-SEC-004",
+  "module": "Security",
+  "title": "Configuration files are not served",
+  "type": "security",
+  "preconditions": "Server running with public/ as web root",
+  "input": "GET /.env",
+  "expected": "HTTP 404; no file contents"
+ },
+ {
+  "code": "TC-DB-001",
+  "module": "Resilience",
+  "title": "Database outage shows a safe 503 page",
+  "type": "functional",
+  "preconditions": "Database unreachable",
+  "input": "Open a page that needs the database",
+  "expected": "HTTP 503 with a friendly message and no stack trace"
+ },
+ {
+  "code": "TC-UI-001",
+  "module": "Interface",
+  "title": "No horizontal scrolling at 375 px",
+  "type": "functional",
+  "preconditions": "None",
+  "input": "Open key pages at 375 px wide",
+  "expected": "Document width equals viewport width"
+ },
+ {
+  "code": "TC-UI-002",
+  "module": "Interface",
+  "title": "Reduced motion leaves all content visible",
+  "type": "functional",
+  "preconditions": "prefers-reduced-motion: reduce",
+  "input": "Open the homepage",
+  "expected": "No reveal animations; all content visible immediately"
+ },
+ {
+  "code": "TC-A11Y-001",
+  "module": "Accessibility",
+  "title": "Guest request can be completed with the keyboard only",
+  "type": "functional",
+  "preconditions": "None",
+  "input": "Tab through and submit the new-patient form",
+  "expected": "Every control reachable with visible focus; errors linked from the summary"
+ }
+]

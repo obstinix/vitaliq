@@ -1,0 +1,1041 @@
+[
+ {
+  "code": "TC-NAME-001",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Two-part Latin name",
+  "type": "positive",
+  "input": "Ananya Iyer",
+  "expected": true
+ },
+ {
+  "code": "TC-NAME-002",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Single name (mononym)",
+  "type": "positive",
+  "input": "Rahul",
+  "expected": true,
+  "notes": "Many people in India use a single name."
+ },
+ {
+  "code": "TC-NAME-003",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Apostrophe in surname",
+  "type": "positive",
+  "input": "Sean O'Brien",
+  "expected": true
+ },
+ {
+  "code": "TC-NAME-004",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Hyphen and apostrophe",
+  "type": "positive",
+  "input": "Mary-Jane D'Souza",
+  "expected": true
+ },
+ {
+  "code": "TC-NAME-005",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Initials with full stops",
+  "type": "positive",
+  "input": "A. P. J. Abdul Kalam",
+  "expected": true
+ },
+ {
+  "code": "TC-NAME-006",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Devanagari script",
+  "type": "unicode",
+  "input": "प्रिया शर्मा",
+  "expected": true
+ },
+ {
+  "code": "TC-NAME-007",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Tamil script (ends in a vowel sign)",
+  "type": "unicode",
+  "input": "கார்த்திக் ராஜா",
+  "expected": true
+ },
+ {
+  "code": "TC-NAME-008",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Accented Latin letters",
+  "type": "unicode",
+  "input": "Zoë Fernández",
+  "expected": true
+ },
+ {
+  "code": "TC-NAME-009",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Emoji is not a letter",
+  "type": "unicode",
+  "input": "Ananya 😊",
+  "expected": false
+ },
+ {
+  "code": "TC-NAME-010",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Minimum length: 2 characters",
+  "type": "boundary",
+  "input": "Li",
+  "expected": true
+ },
+ {
+  "code": "TC-NAME-011",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Below minimum: 1 character",
+  "type": "boundary",
+  "input": "A",
+  "expected": false
+ },
+ {
+  "code": "TC-NAME-012",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Maximum length: 100 characters",
+  "type": "boundary",
+  "input": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "expected": true
+ },
+ {
+  "code": "TC-NAME-013",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Above maximum: 101 characters",
+  "type": "boundary",
+  "input": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "expected": false
+ },
+ {
+  "code": "TC-NAME-014",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Digits are rejected",
+  "type": "negative",
+  "input": "R2D2",
+  "expected": false
+ },
+ {
+  "code": "TC-NAME-015",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Underscore is rejected",
+  "type": "negative",
+  "input": "Ravi_K",
+  "expected": false
+ },
+ {
+  "code": "TC-NAME-016",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Trailing hyphen",
+  "type": "malformed",
+  "input": "Ananya-",
+  "expected": false
+ },
+ {
+  "code": "TC-NAME-017",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Leading apostrophe",
+  "type": "malformed",
+  "input": "'Ananya",
+  "expected": false
+ },
+ {
+  "code": "TC-NAME-018",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Leading and trailing spaces are trimmed",
+  "type": "whitespace",
+  "input": "  Ananya Iyer  ",
+  "expected": true
+ },
+ {
+  "code": "TC-NAME-019",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Repeated inner spaces are collapsed",
+  "type": "whitespace",
+  "input": "Ananya     Iyer",
+  "expected": true
+ },
+ {
+  "code": "TC-NAME-020",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Tab between names is treated as a space",
+  "type": "whitespace",
+  "input": "Ananya\tIyer",
+  "expected": true
+ },
+ {
+  "code": "TC-NAME-021",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Spaces only",
+  "type": "whitespace",
+  "input": "     ",
+  "expected": false
+ },
+ {
+  "code": "TC-NAME-022",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "Script tag",
+  "type": "security",
+  "input": "<script>alert(1)</script>",
+  "expected": false
+ },
+ {
+  "code": "TC-NAME-023",
+  "rule": "full_name",
+  "module": "Registration",
+  "title": "SQL injection fragment",
+  "type": "security",
+  "input": "Robert'); DROP TABLE users;--",
+  "expected": false
+ },
+ {
+  "code": "TC-EMAIL-001",
+  "rule": "email",
+  "module": "Registration",
+  "title": "Typical address",
+  "type": "positive",
+  "input": "ananya.iyer@example.com",
+  "expected": true
+ },
+ {
+  "code": "TC-EMAIL-002",
+  "rule": "email",
+  "module": "Registration",
+  "title": "Plus tag and sub-domain",
+  "type": "positive",
+  "input": "first+tag@sub.example.in",
+  "expected": true
+ },
+ {
+  "code": "TC-EMAIL-003",
+  "rule": "email",
+  "module": "Registration",
+  "title": "Upper case is normalised",
+  "type": "positive",
+  "input": "Ananya@Example.COM",
+  "expected": true
+ },
+ {
+  "code": "TC-EMAIL-004",
+  "rule": "email",
+  "module": "Registration",
+  "title": "Surrounding spaces are trimmed",
+  "type": "whitespace",
+  "input": "  ananya@example.com  ",
+  "expected": true
+ },
+ {
+  "code": "TC-EMAIL-005",
+  "rule": "email",
+  "module": "Registration",
+  "title": "Missing @",
+  "type": "negative",
+  "input": "ananya.example.com",
+  "expected": false
+ },
+ {
+  "code": "TC-EMAIL-006",
+  "rule": "email",
+  "module": "Registration",
+  "title": "Missing top-level domain",
+  "type": "negative",
+  "input": "ananya@example",
+  "expected": false
+ },
+ {
+  "code": "TC-EMAIL-007",
+  "rule": "email",
+  "module": "Registration",
+  "title": "Two @ signs",
+  "type": "malformed",
+  "input": "ananya@@example.com",
+  "expected": false
+ },
+ {
+  "code": "TC-EMAIL-008",
+  "rule": "email",
+  "module": "Registration",
+  "title": "Space inside local part",
+  "type": "whitespace",
+  "input": "an anya@example.com",
+  "expected": false
+ },
+ {
+  "code": "TC-EMAIL-009",
+  "rule": "email",
+  "module": "Registration",
+  "title": "Consecutive dots in local part",
+  "type": "malformed",
+  "input": "ananya..iyer@example.com",
+  "expected": false
+ },
+ {
+  "code": "TC-EMAIL-010",
+  "rule": "email",
+  "module": "Registration",
+  "title": "Leading dot in local part",
+  "type": "malformed",
+  "input": ".ananya@example.com",
+  "expected": false
+ },
+ {
+  "code": "TC-EMAIL-011",
+  "rule": "email",
+  "module": "Registration",
+  "title": "Domain label ending in hyphen",
+  "type": "malformed",
+  "input": "ananya@example-.com",
+  "expected": false
+ },
+ {
+  "code": "TC-EMAIL-012",
+  "rule": "email",
+  "module": "Registration",
+  "title": "Non-ASCII local part (not supported)",
+  "type": "unicode",
+  "input": "अनन्या@example.com",
+  "expected": false,
+  "notes": "Internationalised email (RFC 6531) is out of scope; documented limitation."
+ },
+ {
+  "code": "TC-EMAIL-013",
+  "rule": "email",
+  "module": "Registration",
+  "title": "Longer than 254 characters",
+  "type": "boundary",
+  "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.com",
+  "expected": false
+ },
+ {
+  "code": "TC-EMAIL-014",
+  "rule": "email",
+  "module": "Registration",
+  "title": "HTML in address",
+  "type": "security",
+  "input": "<script>@example.com",
+  "expected": false
+ },
+ {
+  "code": "TC-MOB-001",
+  "rule": "indian_mobile",
+  "module": "Contact details",
+  "title": "Ten digits",
+  "type": "positive",
+  "input": "9876543210",
+  "expected": true
+ },
+ {
+  "code": "TC-MOB-002",
+  "rule": "indian_mobile",
+  "module": "Contact details",
+  "title": "+91 with spaces",
+  "type": "positive",
+  "input": "+91 98765 43210",
+  "expected": true
+ },
+ {
+  "code": "TC-MOB-003",
+  "rule": "indian_mobile",
+  "module": "Contact details",
+  "title": "+91 with hyphens",
+  "type": "positive",
+  "input": "+91-98765-43210",
+  "expected": true
+ },
+ {
+  "code": "TC-MOB-004",
+  "rule": "indian_mobile",
+  "module": "Contact details",
+  "title": "Trunk prefix 0",
+  "type": "positive",
+  "input": "09876543210",
+  "expected": true
+ },
+ {
+  "code": "TC-MOB-005",
+  "rule": "indian_mobile",
+  "module": "Contact details",
+  "title": "91 prefix without plus",
+  "type": "positive",
+  "input": "919876543210",
+  "expected": true
+ },
+ {
+  "code": "TC-MOB-006",
+  "rule": "indian_mobile",
+  "module": "Contact details",
+  "title": "0091 international prefix",
+  "type": "positive",
+  "input": "0091 9876543210",
+  "expected": true
+ },
+ {
+  "code": "TC-MOB-007",
+  "rule": "indian_mobile",
+  "module": "Contact details",
+  "title": "First digit 6 (lowest allowed)",
+  "type": "boundary",
+  "input": "6000000000",
+  "expected": true
+ },
+ {
+  "code": "TC-MOB-008",
+  "rule": "indian_mobile",
+  "module": "Contact details",
+  "title": "First digit 5 is not a mobile series",
+  "type": "boundary",
+  "input": "5876543210",
+  "expected": false
+ },
+ {
+  "code": "TC-MOB-009",
+  "rule": "indian_mobile",
+  "module": "Contact details",
+  "title": "Nine digits",
+  "type": "boundary",
+  "input": "987654321",
+  "expected": false
+ },
+ {
+  "code": "TC-MOB-010",
+  "rule": "indian_mobile",
+  "module": "Contact details",
+  "title": "Eleven digits without prefix",
+  "type": "boundary",
+  "input": "98765432101",
+  "expected": false
+ },
+ {
+  "code": "TC-MOB-011",
+  "rule": "indian_mobile",
+  "module": "Contact details",
+  "title": "Letters",
+  "type": "negative",
+  "input": "98765ABCDE",
+  "expected": false
+ },
+ {
+  "code": "TC-MOB-012",
+  "rule": "indian_mobile",
+  "module": "Contact details",
+  "title": "UK number",
+  "type": "negative",
+  "input": "+44 7911 123456",
+  "expected": false
+ },
+ {
+  "code": "TC-MOB-013",
+  "rule": "indian_mobile",
+  "module": "Contact details",
+  "title": "Surrounding spaces are trimmed",
+  "type": "whitespace",
+  "input": " 9876543210 ",
+  "expected": true
+ },
+ {
+  "code": "TC-MOB-014",
+  "rule": "indian_mobile",
+  "module": "Contact details",
+  "title": "Two spaces between groups",
+  "type": "whitespace",
+  "input": "98765  43210",
+  "expected": false
+ },
+ {
+  "code": "TC-MOB-015",
+  "rule": "indian_mobile",
+  "module": "Contact details",
+  "title": "Devanagari digits",
+  "type": "unicode",
+  "input": "९८७६५४३२१०",
+  "expected": false,
+  "notes": "Guards against \\d matching non-ASCII digits in PHP with /u."
+ },
+ {
+  "code": "TC-PWD-001",
+  "rule": "password",
+  "module": "Authentication",
+  "title": "Passphrase with spaces and a digit",
+  "type": "positive",
+  "input": "correct horse 42",
+  "expected": true
+ },
+ {
+  "code": "TC-PWD-002",
+  "rule": "password",
+  "module": "Authentication",
+  "title": "Mixed punctuation",
+  "type": "positive",
+  "input": "Mango-Lassi-2026",
+  "expected": true
+ },
+ {
+  "code": "TC-PWD-003",
+  "rule": "password",
+  "module": "Authentication",
+  "title": "Exactly 10 characters",
+  "type": "boundary",
+  "input": "abcdefgh12",
+  "expected": true
+ },
+ {
+  "code": "TC-PWD-004",
+  "rule": "password",
+  "module": "Authentication",
+  "title": "Nine characters",
+  "type": "boundary",
+  "input": "abcdefg12",
+  "expected": false
+ },
+ {
+  "code": "TC-PWD-005",
+  "rule": "password",
+  "module": "Authentication",
+  "title": "Exactly 128 characters",
+  "type": "boundary",
+  "input": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+  "expected": true
+ },
+ {
+  "code": "TC-PWD-006",
+  "rule": "password",
+  "module": "Authentication",
+  "title": "129 characters",
+  "type": "boundary",
+  "input": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a",
+  "expected": false
+ },
+ {
+  "code": "TC-PWD-007",
+  "rule": "password",
+  "module": "Authentication",
+  "title": "Letters only",
+  "type": "negative",
+  "input": "onlyletterspassword",
+  "expected": false
+ },
+ {
+  "code": "TC-PWD-008",
+  "rule": "password",
+  "module": "Authentication",
+  "title": "Digits only",
+  "type": "negative",
+  "input": "12345678901234",
+  "expected": false
+ },
+ {
+  "code": "TC-PWD-009",
+  "rule": "password",
+  "module": "Authentication",
+  "title": "Common password on the blocklist",
+  "type": "negative",
+  "input": "password123",
+  "expected": false
+ },
+ {
+  "code": "TC-PWD-010",
+  "rule": "password",
+  "module": "Authentication",
+  "title": "Letters from another script count as letters",
+  "type": "unicode",
+  "input": "पासवर्ड2026सुरक्षित",
+  "expected": true
+ },
+ {
+  "code": "TC-PWD-011",
+  "rule": "password",
+  "module": "Authentication",
+  "title": "Spaces and one digit, no letter",
+  "type": "whitespace",
+  "input": "          1",
+  "expected": false
+ },
+ {
+  "code": "TC-PWD-012",
+  "rule": "password",
+  "module": "Authentication",
+  "title": "Embedded line break",
+  "type": "malformed",
+  "input": "abcdefgh\n12",
+  "expected": false
+ },
+ {
+  "code": "TC-REF-001",
+  "rule": "reference",
+  "module": "Tracking",
+  "title": "Issued format",
+  "type": "positive",
+  "input": "VQ-261010-7K3MP",
+  "expected": true
+ },
+ {
+  "code": "TC-REF-002",
+  "rule": "reference",
+  "module": "Tracking",
+  "title": "Lower case is normalised",
+  "type": "positive",
+  "input": "vq-261010-7k3mp",
+  "expected": true
+ },
+ {
+  "code": "TC-REF-003",
+  "rule": "reference",
+  "module": "Tracking",
+  "title": "Surrounding spaces are trimmed",
+  "type": "whitespace",
+  "input": " VQ-261010-7K3MP ",
+  "expected": true
+ },
+ {
+  "code": "TC-REF-004",
+  "rule": "reference",
+  "module": "Tracking",
+  "title": "Letter O is not in the alphabet",
+  "type": "negative",
+  "input": "VQ-261010-7K3MO",
+  "expected": false
+ },
+ {
+  "code": "TC-REF-005",
+  "rule": "reference",
+  "module": "Tracking",
+  "title": "Letter I is not in the alphabet",
+  "type": "negative",
+  "input": "VQ-261010-7K3MI",
+  "expected": false
+ },
+ {
+  "code": "TC-REF-006",
+  "rule": "reference",
+  "module": "Tracking",
+  "title": "Five-digit date part",
+  "type": "boundary",
+  "input": "VQ-26101-7K3MP",
+  "expected": false
+ },
+ {
+  "code": "TC-REF-007",
+  "rule": "reference",
+  "module": "Tracking",
+  "title": "Six-character suffix",
+  "type": "boundary",
+  "input": "VQ-261010-7K3MPX",
+  "expected": false
+ },
+ {
+  "code": "TC-REF-008",
+  "rule": "reference",
+  "module": "Tracking",
+  "title": "Wrong prefix",
+  "type": "malformed",
+  "input": "QV-261010-7K3MP",
+  "expected": false
+ },
+ {
+  "code": "TC-REF-009",
+  "rule": "reference",
+  "module": "Tracking",
+  "title": "Missing hyphens",
+  "type": "malformed",
+  "input": "VQ2610107K3MP",
+  "expected": false
+ },
+ {
+  "code": "TC-REF-010",
+  "rule": "reference",
+  "module": "Tracking",
+  "title": "SQL injection fragment",
+  "type": "security",
+  "input": "VQ-261010-' OR 1=1",
+  "expected": false
+ },
+ {
+  "code": "TC-PIN-001",
+  "rule": "pincode",
+  "module": "Address",
+  "title": "Six digits",
+  "type": "positive",
+  "input": "560001",
+  "expected": true
+ },
+ {
+  "code": "TC-PIN-002",
+  "rule": "pincode",
+  "module": "Address",
+  "title": "Space after third digit is removed",
+  "type": "whitespace",
+  "input": "110 001",
+  "expected": true
+ },
+ {
+  "code": "TC-PIN-003",
+  "rule": "pincode",
+  "module": "Address",
+  "title": "Leading zero",
+  "type": "negative",
+  "input": "056001",
+  "expected": false
+ },
+ {
+  "code": "TC-PIN-004",
+  "rule": "pincode",
+  "module": "Address",
+  "title": "Five digits",
+  "type": "boundary",
+  "input": "56001",
+  "expected": false
+ },
+ {
+  "code": "TC-PIN-005",
+  "rule": "pincode",
+  "module": "Address",
+  "title": "Seven digits",
+  "type": "boundary",
+  "input": "5600011",
+  "expected": false
+ },
+ {
+  "code": "TC-PIN-006",
+  "rule": "pincode",
+  "module": "Address",
+  "title": "Letters",
+  "type": "malformed",
+  "input": "ABC123",
+  "expected": false
+ },
+ {
+  "code": "TC-PIN-007",
+  "rule": "pincode",
+  "module": "Address",
+  "title": "Devanagari digits",
+  "type": "unicode",
+  "input": "५६०००१",
+  "expected": false
+ },
+ {
+  "code": "TC-EMP-001",
+  "rule": "employee_code",
+  "module": "Phlebotomists",
+  "title": "Issued format",
+  "type": "positive",
+  "input": "PHL-0007",
+  "expected": true
+ },
+ {
+  "code": "TC-EMP-002",
+  "rule": "employee_code",
+  "module": "Phlebotomists",
+  "title": "Lower case is normalised",
+  "type": "positive",
+  "input": "phl-1234",
+  "expected": true
+ },
+ {
+  "code": "TC-EMP-003",
+  "rule": "employee_code",
+  "module": "Phlebotomists",
+  "title": "Too few digits",
+  "type": "boundary",
+  "input": "PHL-7",
+  "expected": false
+ },
+ {
+  "code": "TC-EMP-004",
+  "rule": "employee_code",
+  "module": "Phlebotomists",
+  "title": "Missing hyphen",
+  "type": "malformed",
+  "input": "PHL0007",
+  "expected": false
+ },
+ {
+  "code": "TC-EMP-005",
+  "rule": "employee_code",
+  "module": "Phlebotomists",
+  "title": "Wrong prefix",
+  "type": "negative",
+  "input": "LAB-0007",
+  "expected": false
+ },
+ {
+  "code": "TC-BAR-001",
+  "rule": "sample_barcode",
+  "module": "Sample collection",
+  "title": "Typical label",
+  "type": "positive",
+  "input": "VQS20261010A",
+  "expected": true
+ },
+ {
+  "code": "TC-BAR-002",
+  "rule": "sample_barcode",
+  "module": "Sample collection",
+  "title": "Minimum length: 8",
+  "type": "boundary",
+  "input": "12345678",
+  "expected": true
+ },
+ {
+  "code": "TC-BAR-003",
+  "rule": "sample_barcode",
+  "module": "Sample collection",
+  "title": "Seven characters",
+  "type": "boundary",
+  "input": "1234567",
+  "expected": false
+ },
+ {
+  "code": "TC-BAR-004",
+  "rule": "sample_barcode",
+  "module": "Sample collection",
+  "title": "Fifteen characters",
+  "type": "boundary",
+  "input": "ABCDEFGHIJKLMNO",
+  "expected": false
+ },
+ {
+  "code": "TC-BAR-005",
+  "rule": "sample_barcode",
+  "module": "Sample collection",
+  "title": "Hyphen is not allowed",
+  "type": "malformed",
+  "input": "VQS-2026",
+  "expected": false
+ },
+ {
+  "code": "TC-BAR-006",
+  "rule": "sample_barcode",
+  "module": "Sample collection",
+  "title": "Lower case is normalised",
+  "type": "positive",
+  "input": "vqs20261010a",
+  "expected": true
+ },
+ {
+  "code": "TC-CT-001",
+  "rule": "ct_value",
+  "module": "Results",
+  "title": "Typical value with one decimal",
+  "type": "positive",
+  "input": "24.5",
+  "expected": true
+ },
+ {
+  "code": "TC-CT-002",
+  "rule": "ct_value",
+  "module": "Results",
+  "title": "Zero",
+  "type": "boundary",
+  "input": "0",
+  "expected": true
+ },
+ {
+  "code": "TC-CT-003",
+  "rule": "ct_value",
+  "module": "Results",
+  "title": "Upper bound 45",
+  "type": "boundary",
+  "input": "45",
+  "expected": true
+ },
+ {
+  "code": "TC-CT-004",
+  "rule": "ct_value",
+  "module": "Results",
+  "title": "Above the upper bound with a decimal",
+  "type": "boundary",
+  "input": "45.9",
+  "expected": false,
+  "notes": "Requirement: Ct between 0 and 45 inclusive (matches the database CHECK constraint)."
+ },
+ {
+  "code": "TC-CT-005",
+  "rule": "ct_value",
+  "module": "Results",
+  "title": "46 is out of range",
+  "type": "boundary",
+  "input": "46",
+  "expected": false
+ },
+ {
+  "code": "TC-CT-006",
+  "rule": "ct_value",
+  "module": "Results",
+  "title": "Negative value",
+  "type": "negative",
+  "input": "-3",
+  "expected": false
+ },
+ {
+  "code": "TC-CT-007",
+  "rule": "ct_value",
+  "module": "Results",
+  "title": "Two decimal places",
+  "type": "malformed",
+  "input": "24.55",
+  "expected": false
+ },
+ {
+  "code": "TC-CT-008",
+  "rule": "ct_value",
+  "module": "Results",
+  "title": "Text",
+  "type": "negative",
+  "input": "abc",
+  "expected": false
+ },
+ {
+  "code": "TC-DATE-001",
+  "rule": "iso_date",
+  "module": "Forms",
+  "title": "Valid date",
+  "type": "positive",
+  "input": "2026-10-10",
+  "expected": true
+ },
+ {
+  "code": "TC-DATE-002",
+  "rule": "iso_date",
+  "module": "Forms",
+  "title": "Leap day in a leap year",
+  "type": "boundary",
+  "input": "2024-02-29",
+  "expected": true
+ },
+ {
+  "code": "TC-DATE-003",
+  "rule": "iso_date",
+  "module": "Forms",
+  "title": "Leap day in a common year",
+  "type": "boundary",
+  "input": "2026-02-29",
+  "expected": false
+ },
+ {
+  "code": "TC-DATE-004",
+  "rule": "iso_date",
+  "module": "Forms",
+  "title": "30 February",
+  "type": "negative",
+  "input": "2026-02-30",
+  "expected": false
+ },
+ {
+  "code": "TC-DATE-005",
+  "rule": "iso_date",
+  "module": "Forms",
+  "title": "Day-first format",
+  "type": "malformed",
+  "input": "10/10/2026",
+  "expected": false
+ },
+ {
+  "code": "TC-DATE-006",
+  "rule": "iso_date",
+  "module": "Forms",
+  "title": "Month 13",
+  "type": "negative",
+  "input": "2026-13-01",
+  "expected": false
+ },
+ {
+  "code": "TC-DATE-007",
+  "rule": "iso_date",
+  "module": "Forms",
+  "title": "Missing zero padding",
+  "type": "malformed",
+  "input": "2026-1-5",
+  "expected": false
+ },
+ {
+  "code": "TC-RQD-001",
+  "rule": "required",
+  "module": "Forms",
+  "title": "Single letter",
+  "type": "positive",
+  "input": "x",
+  "expected": true
+ },
+ {
+  "code": "TC-RQD-002",
+  "rule": "required",
+  "module": "Forms",
+  "title": "Digit zero counts as content",
+  "type": "positive",
+  "input": "0",
+  "expected": true
+ },
+ {
+  "code": "TC-RQD-003",
+  "rule": "required",
+  "module": "Forms",
+  "title": "Text with surrounding spaces",
+  "type": "whitespace",
+  "input": " ok ",
+  "expected": true
+ },
+ {
+  "code": "TC-RQD-004",
+  "rule": "required",
+  "module": "Forms",
+  "title": "Spaces only",
+  "type": "whitespace",
+  "input": "   ",
+  "expected": false
+ },
+ {
+  "code": "TC-RQD-005",
+  "rule": "required",
+  "module": "Forms",
+  "title": "Tab and newline only",
+  "type": "whitespace",
+  "input": "\t\n",
+  "expected": false
+ },
+ {
+  "code": "TC-RQD-006",
+  "rule": "required",
+  "module": "Forms",
+  "title": "Zero-width space only",
+  "type": "unicode",
+  "input": "​",
+  "expected": false
+ },
+ {
+  "code": "TC-RQD-007",
+  "rule": "required",
+  "module": "Forms",
+  "title": "No-break space only",
+  "type": "unicode",
+  "input": " ",
+  "expected": false
+ },
+ {
+  "code": "TC-RQD-008",
+  "rule": "required",
+  "module": "Forms",
+  "title": "Ellipsis punctuation counts as content",
+  "type": "unicode",
+  "input": "…",
+  "expected": true
+ }
+]
