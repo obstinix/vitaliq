@@ -8,6 +8,8 @@ declare(strict_types=1);
  *   php bin/qa.php sync                   add new catalogue cases from database/qa/*.json
  *   php bin/qa.php run                    execute the regex suite and record a run
  *   php bin/qa.php import-junit <file>    record a PHPUnit JUnit XML report as a run
+ *   php bin/qa.php cover <file>           mark catalogue cases automated by PHPUnit
+ *                                         (database/qa/automation-map.json) from the report
  */
 
 require dirname(__DIR__) . '/src/bootstrap.php';
@@ -47,7 +49,18 @@ switch ($command) {
         $run = $qa->run($id);
         fwrite(STDOUT, sprintf("Imported run #%d: %d tests, %d passed, %d failed, %d skipped.\n", $id, $run['total'], $run['passed'], $run['failed'], $run['blocked']));
         break;
+    case 'cover':
+        $path = $argv[2] ?? '';
+        $id = $qa->recordCoverage($path);
+        $run = $qa->run($id);
+        fwrite(STDOUT, sprintf("Run #%d: %d catalogue cases evaluated from PHPUnit, %d passed, %d failed, %d blocked.\n", $id, $run['total'], $run['passed'], $run['failed'], $run['blocked']));
+        foreach ($run['results'] as $r) {
+            if ($r['status'] !== 'pass') {
+                fwrite(STDOUT, '  ' . strtoupper($r['status']) . ' ' . $r['test_name'] . ': ' . $r['actual_result'] . "\n");
+            }
+        }
+        break;
     default:
-        fwrite(STDERR, "Usage: php bin/qa.php sync | run | import-junit <file>\n");
+        fwrite(STDERR, "Usage: php bin/qa.php sync | run | import-junit <file> | cover <file>\n");
         exit(1);
 }

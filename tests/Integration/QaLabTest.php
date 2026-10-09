@@ -105,6 +105,51 @@ final class QaLabTest extends DatabaseTestCase
         $this->assertSame('Integration', $byName['BarTest::testB']['module']);
     }
 
+    public function testCoverageRunDerivesCaseStatusFromTheJunitReport(): void
+    {
+        $this->qa()->syncCatalogue();
+        $map = tempnam(sys_get_temp_dir(), 'map');
+        file_put_contents($map, json_encode([
+            'TC-SEC-002' => ['SecurityTest::testA'],
+            'TC-SEC-003' => ['SecurityTest::testA', 'SecurityTest::testB'],
+            'TC-DB-001' => ['SecurityTest::testMissing'],
+        ]));
+        $junit = tempnam(sys_get_temp_dir(), 'junit');
+        file_put_contents($junit, '<?xml version="1.0"?><testsuites><testsuite name="s">'
+            . '<testcase name="testA with data set &quot;x&quot;" class="Vitaliq\Tests\Functional\SecurityTest" assertions="1" time="0"/>'
+            . '<testcase name="testA with data set &quot;y&quot;" class="Vitaliq\Tests\Functional\SecurityTest" assertions="1" time="0"/>'
+            . '<testcase name="testB" class="Vitaliq\Tests\Functional\SecurityTest" assertions="1" time="0"><failure>boom</failure></testcase>'
+            . '</testsuite></testsuites>');
+        $run = $this->qa()->run($this->qa()->recordCoverage($junit, $map));
+        unlink($map);
+        unlink($junit);
+        $byCase = array_column($run['results'], 'status', 'case_code');
+        $this->assertCount(3, $byCase);
+        $this->assertSame('pass', $byCase['TC-SEC-002'], 'All data sets of the mapped test passed');
+        $this->assertSame('fail', $byCase['TC-SEC-003'], 'One failing mapped test fails the case');
+        $this->assertSame('blocked', $byCase['TC-DB-001'], 'A missing test blocks rather than passes');
+    }
+
+    public function testEveryTestNamedInTheAutomationMapExists(): void
+    {
+        $map = json_decode((string) file_get_contents(VQ_ROOT . '/database/qa/automation-map.json'), true, 512, JSON_THROW_ON_ERROR);
+        $catalogue = array_column(json_decode((string) file_get_contents(VQ_ROOT . '/database/qa/manual-cases.json'), true), 'code');
+        foreach ($map as $code => $tests) {
+            $this->assertContains($code, $catalogue, "{$code} is not a catalogue case");
+            foreach ($tests as $test) {
+                [$class, $method] = explode('::', $test);
+                $found = false;
+                foreach (['Unit', 'Integration', 'Functional'] as $suite) {
+                    $fqcn = "Vitaliq\\Tests\\{$suite}\\{$class}";
+                    if (class_exists($fqcn) && method_exists($fqcn, $method)) {
+                        $found = true;
+                    }
+                }
+                $this->assertTrue($found, "{$code}: {$test} does not exist");
+            }
+        }
+    }
+
     public function testDefectLifecycleRequiresResolutionNotes(): void
     {
         $userId = $this->createUser('qa', 'qa@vitaliq.test');

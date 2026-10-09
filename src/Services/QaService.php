@@ -388,6 +388,73 @@ final class QaService
         });
     }
 
+    /**
+     * Record catalogue (manual/functional) cases that are automated by
+     * PHPUnit, using database/qa/automation-map.json. A case passes only if
+     * every mapped test appears in the JUnit report and passed; it fails if
+     * any mapped test failed, and is blocked if a mapped test is missing.
+     */
+    public function recordCoverage(string $junitPath, ?string $mapPath = null): int
+    {
+        $mapPath ??= VQ_ROOT . '/database/qa/automation-map.json';
+        $map = json_decode((string) file_get_contents($mapPath), true, 512, JSON_THROW_ON_ERROR);
+        $previous = libxml_use_internal_errors(true);
+        $xml = simplexml_load_file($junitPath, SimpleXMLElement::class, LIBXML_NONET);
+        libxml_use_internal_errors($previous);
+        if ($xml === false) {
+            throw new RuntimeException('Could not parse JUnit report.');
+        }
+        /** @var array<string,list<string>> $outcomes "Class::method" => statuses (one per data set) */
+        $outcomes = [];
+        foreach ($xml->xpath('//testcase') ?: [] as $tc) {
+            $class = (string) $tc['class'];
+            $method = preg_replace('/ with data set .*$/', '', (string) $tc['name']);
+            $key = substr(strrchr($class, '\\') ?: $class, 1) . '::' . $method;
+            $outcomes[$key][] = isset($tc->failure) || isset($tc->error) ? 'fail' : (isset($tc->skipped) ? 'skipped' : 'pass');
+        }
+        $started = date('Y-m-d H:i:s', (int) filemtime($junitPath));
+
+        return $this->app->db->transaction(function (Database $db) use ($map, $outcomes, $started): int {
+            $runId = $db->insert(
+                'INSERT INTO qa_runs (run_type, triggered_from, started_at, environment, notes)
+                 VALUES (\'phpunit\', \'cli\', :s, :e, :n)',
+                ['s' => $started, 'e' => $this->environment(), 'n' => 'Catalogue cases evaluated from the PHPUnit JUnit report via automation-map.json']
+            );
+            $passed = $failed = $blocked = 0;
+            foreach ($map as $code => $tests) {
+                $case = $db->one('SELECT id, case_code, title, module FROM qa_test_cases WHERE case_code = :c', ['c' => $code]);
+                if ($case === null) {
+                    continue;
+                }
+                $missing = array_values(array_filter($tests, static fn ($t) => !isset($outcomes[$t])));
+                $failing = array_values(array_filter($tests, static fn ($t) => isset($outcomes[$t]) && in_array('fail', $outcomes[$t], true)));
+                if ($failing !== []) {
+                    $status = 'fail';
+                    $actual = 'Failed in PHPUnit: ' . implode(', ', $failing);
+                    $failed++;
+                } elseif ($missing !== []) {
+                    $status = 'blocked';
+                    $actual = 'Mapped test not found in the report: ' . implode(', ', $missing);
+                    $blocked++;
+                } else {
+                    $status = 'pass';
+                    $actual = 'Automated: ' . implode(', ', $tests) . ' passed';
+                    $passed++;
+                }
+                $db->insert(
+                    'INSERT INTO qa_run_results (run_id, test_case_id, test_name, module, status, actual_result, executed_at)
+                     VALUES (:r, :c, :n, :m, :s, :a, :t)',
+                    ['r' => $runId, 'c' => (int) $case['id'], 'n' => $case['case_code'] . ' ' . $case['title'], 'm' => $case['module'],
+                     's' => $status, 'a' => mb_substr($actual, 0, 500), 't' => $started]
+                );
+            }
+            $db->execute('UPDATE qa_runs SET finished_at = :f, total = :t, passed = :p, failed = :fa, blocked = :b WHERE id = :id', [
+                'f' => $started, 't' => $passed + $failed + $blocked, 'p' => $passed, 'fa' => $failed, 'b' => $blocked, 'id' => $runId,
+            ]);
+            return $runId;
+        });
+    }
+
     // ------------------------------------------------------------------
     // Reporting
     // ------------------------------------------------------------------
