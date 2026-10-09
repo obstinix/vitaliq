@@ -1,0 +1,385 @@
+{
+ "title": "India: COVID-19 cases reported to WHO, aggregated by month",
+ "source": "World Health Organization, WHO Coronavirus (COVID-19) dashboard, data.who.int",
+ "source_url": "https://data.who.int/dashboards/covid19/data",
+ "download_url": "https://srhdpeuwpubsa.blob.core.windows.net/whdh/COVID/WHO-COVID-19-global-data.csv",
+ "licence": "CC BY 4.0 (with WHO additional terms)",
+ "retrieved_on": "2026-10-10",
+ "method": "Sum of weekly New_cases and New_deaths for Country_code=IN, grouped by the calendar month of Date_reported. Blank weekly values counted as 0.",
+ "latest_cumulative_cases": 45056221,
+ "latest_cumulative_deaths": 533849,
+ "latest_report_date": "2026-09-20",
+ "sha256_of_source_csv": "1ced8fb93e45ba9ab20fce10c024545ba122702c429a4f00d4bda5f90fac89d3",
+ "series": [
+  {
+   "month": "2020-01",
+   "new_cases": 0,
+   "new_deaths": 0
+  },
+  {
+   "month": "2020-02",
+   "new_cases": 3,
+   "new_deaths": 0
+  },
+  {
+   "month": "2020-03",
+   "new_cases": 976,
+   "new_deaths": 25
+  },
+  {
+   "month": "2020-04",
+   "new_cases": 25517,
+   "new_deaths": 799
+  },
+  {
+   "month": "2020-05",
+   "new_cases": 155647,
+   "new_deaths": 4340
+  },
+  {
+   "month": "2020-06",
+   "new_cases": 346716,
+   "new_deaths": 10931
+  },
+  {
+   "month": "2020-07",
+   "new_cases": 856663,
+   "new_deaths": 15968
+  },
+  {
+   "month": "2020-08",
+   "new_cases": 2157211,
+   "new_deaths": 31435
+  },
+  {
+   "month": "2020-09",
+   "new_cases": 2449799,
+   "new_deaths": 31005
+  },
+  {
+   "month": "2020-10",
+   "new_cases": 1872279,
+   "new_deaths": 24031
+  },
+  {
+   "month": "2020-11",
+   "new_cases": 1528108,
+   "new_deaths": 18162
+  },
+  {
+   "month": "2020-12",
+   "new_cases": 794931,
+   "new_deaths": 10926
+  },
+  {
+   "month": "2021-01",
+   "new_cases": 558333,
+   "new_deaths": 6652
+  },
+  {
+   "month": "2021-02",
+   "new_cases": 350548,
+   "new_deaths": 2777
+  },
+  {
+   "month": "2021-03",
+   "new_cases": 874893,
+   "new_deaths": 4501
+  },
+  {
+   "month": "2021-04",
+   "new_cases": 4988548,
+   "new_deaths": 30759
+  },
+  {
+   "month": "2021-05",
+   "new_cases": 10934628,
+   "new_deaths": 133661
+  },
+  {
+   "month": "2021-06",
+   "new_cases": 2338383,
+   "new_deaths": 69779
+  },
+  {
+   "month": "2021-07",
+   "new_cases": 1138718,
+   "new_deaths": 24800
+  },
+  {
+   "month": "2021-08",
+   "new_cases": 1323129,
+   "new_deaths": 17279
+  },
+  {
+   "month": "2021-09",
+   "new_cases": 957715,
+   "new_deaths": 9088
+  },
+  {
+   "month": "2021-10",
+   "new_cases": 620555,
+   "new_deaths": 11268
+  },
+  {
+   "month": "2021-11",
+   "new_cases": 299223,
+   "new_deaths": 10368
+  },
+  {
+   "month": "2021-12",
+   "new_cases": 214279,
+   "new_deaths": 11128
+  },
+  {
+   "month": "2022-01",
+   "new_cases": 6305720,
+   "new_deaths": 14409
+  },
+  {
+   "month": "2022-02",
+   "new_cases": 1823595,
+   "new_deaths": 19633
+  },
+  {
+   "month": "2022-03",
+   "new_cases": 103336,
+   "new_deaths": 7280
+  },
+  {
+   "month": "2022-04",
+   "new_cases": 38092,
+   "new_deaths": 1189
+  },
+  {
+   "month": "2022-05",
+   "new_cases": 95498,
+   "new_deaths": 2393
+  },
+  {
+   "month": "2022-06",
+   "new_cases": 236930,
+   "new_deaths": 413
+  },
+  {
+   "month": "2022-07",
+   "new_cases": 629838,
+   "new_deaths": 1358
+  },
+  {
+   "month": "2022-08",
+   "new_cases": 388321,
+   "new_deaths": 1397
+  },
+  {
+   "month": "2022-09",
+   "new_cases": 159982,
+   "new_deaths": 756
+  },
+  {
+   "month": "2022-10",
+   "new_cases": 84152,
+   "new_deaths": 506
+  },
+  {
+   "month": "2022-11",
+   "new_cases": 19296,
+   "new_deaths": 1596
+  },
+  {
+   "month": "2022-12",
+   "new_cases": 5544,
+   "new_deaths": 81
+  },
+  {
+   "month": "2023-01",
+   "new_cases": 5533,
+   "new_deaths": 47
+  },
+  {
+   "month": "2023-02",
+   "new_cases": 3378,
+   "new_deaths": 29
+  },
+  {
+   "month": "2023-03",
+   "new_cases": 18130,
+   "new_deaths": 62
+  },
+  {
+   "month": "2023-04",
+   "new_cases": 241242,
+   "new_deaths": 702
+  },
+  {
+   "month": "2023-05",
+   "new_cases": 44355,
+   "new_deaths": 331
+  },
+  {
+   "month": "2023-06",
+   "new_cases": 4208,
+   "new_deaths": 39
+  },
+  {
+   "month": "2023-07",
+   "new_cases": 1636,
+   "new_deaths": 13
+  },
+  {
+   "month": "2023-08",
+   "new_cases": 1375,
+   "new_deaths": 12
+  },
+  {
+   "month": "2023-09",
+   "new_cases": 1562,
+   "new_deaths": 103
+  },
+  {
+   "month": "2023-10",
+   "new_cases": 2720,
+   "new_deaths": 1262
+  },
+  {
+   "month": "2023-11",
+   "new_cases": 519,
+   "new_deaths": 5
+  },
+  {
+   "month": "2023-12",
+   "new_cases": 11408,
+   "new_deaths": 63
+  },
+  {
+   "month": "2024-01",
+   "new_cases": 11904,
+   "new_deaths": 84
+  },
+  {
+   "month": "2024-02",
+   "new_cases": 3959,
+   "new_deaths": 33
+  },
+  {
+   "month": "2024-03",
+   "new_cases": 5325,
+   "new_deaths": 74
+  },
+  {
+   "month": "2024-04",
+   "new_cases": 2593,
+   "new_deaths": 33
+  },
+  {
+   "month": "2024-05",
+   "new_cases": 2557,
+   "new_deaths": 27
+  },
+  {
+   "month": "2024-06",
+   "new_cases": 1108,
+   "new_deaths": 10
+  },
+  {
+   "month": "2024-07",
+   "new_cases": 817,
+   "new_deaths": 1
+  },
+  {
+   "month": "2024-08",
+   "new_cases": 1085,
+   "new_deaths": 9
+  },
+  {
+   "month": "2024-09",
+   "new_cases": 1085,
+   "new_deaths": 14
+  },
+  {
+   "month": "2024-10",
+   "new_cases": 591,
+   "new_deaths": 7
+  },
+  {
+   "month": "2024-11",
+   "new_cases": 260,
+   "new_deaths": 4
+  },
+  {
+   "month": "2024-12",
+   "new_cases": 93,
+   "new_deaths": 4
+  },
+  {
+   "month": "2025-01",
+   "new_cases": 50,
+   "new_deaths": 1
+  },
+  {
+   "month": "2025-02",
+   "new_cases": 15,
+   "new_deaths": 0
+  },
+  {
+   "month": "2025-03",
+   "new_cases": 22,
+   "new_deaths": 2
+  },
+  {
+   "month": "2025-04",
+   "new_cases": 32,
+   "new_deaths": 0
+  },
+  {
+   "month": "2025-05",
+   "new_cases": 495,
+   "new_deaths": 2
+  },
+  {
+   "month": "2025-06",
+   "new_cases": 10218,
+   "new_deaths": 131
+  },
+  {
+   "month": "2025-07",
+   "new_cases": 442,
+   "new_deaths": 31
+  },
+  {
+   "month": "2025-08",
+   "new_cases": 250,
+   "new_deaths": 18
+  },
+  {
+   "month": "2025-09",
+   "new_cases": 44,
+   "new_deaths": 1
+  },
+  {
+   "month": "2025-10",
+   "new_cases": 72,
+   "new_deaths": 1
+  },
+  {
+   "month": "2025-11",
+   "new_cases": 8,
+   "new_deaths": 1
+  },
+  {
+   "month": "2025-12",
+   "new_cases": 9,
+   "new_deaths": 0
+  },
+  {
+   "month": "2026-01",
+   "new_cases": 9,
+   "new_deaths": 0
+  },
+  {
+   "month": "2026-02",
+   "new_cases": 6,
+   "new_deaths": 0
+  }
+ ]
+}
