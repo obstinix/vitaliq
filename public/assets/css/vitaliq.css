@@ -33,7 +33,7 @@
   --paper-3: #e8ece6;
   --ink: #202a2a;
   --ink-2: #4c5955;
-  --ink-3: #6a7672;
+  --ink-3: #5f6b67;
   --rule: #d8deda;
   --rule-strong: #b9c3be;
   --green: #176b52;
@@ -41,6 +41,7 @@
   --green-wash: #e8f0e9;
   --teal: #397c78;
   --teal-wash: #e3efed;
+  --teal-text: #2f6a66;
   --coral: #c65b4b;
   --coral-text: #a3412f;
   --coral-wash: #f8e9e5;
@@ -176,6 +177,10 @@ main:focus { outline: none; }
 
 .stack > * + * { margin-top: var(--s-4); }
 .cluster { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: center; }
+/* Grid children may shrink below their content's min-width (tabs, long
+   references), so wide content scrolls inside its own box instead of
+   widening the page. */
+.split > *, .grid-2 > *, .hero__grid > *, .form-grid > *, .footer-grid > *, .app-shell > * { min-width: 0; }
 .split { display: grid; gap: var(--s-6); }
 @media (min-width: 60rem) {
   .split { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s-8); }
@@ -745,7 +750,7 @@ select.input {
 }
 .status::before { content: ""; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: currentColor; }
 .status--submitted { color: var(--ink-2); }
-.status--assigned, .status--sample_collected { color: var(--teal); background: var(--teal-wash); border-color: #c4dcd9; }
+.status--assigned, .status--sample_collected { color: var(--teal-text); background: var(--teal-wash); border-color: #c4dcd9; }
 .status--in_progress { color: var(--amber-text); background: var(--amber-wash); border-color: #e6d3aa; }
 .status--completed { color: var(--green); border-color: #b9d3c3; }
 .status--result_available { color: #fff; background: var(--green); border-color: var(--green); }
@@ -827,6 +832,12 @@ select.input {
   .table--stack td::before { content: attr(data-label); position: absolute; left: 0; top: 0.45rem; width: 8.5rem; font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); }
   .table--stack th[scope="row"] { display: block; padding: var(--s-3) 0 var(--s-1); border: 0; }
   .table--stack td.num { text-align: left; }
+}
+@media (max-width: 30rem) {
+  /* Phones: labels above values, so long references never overflow. */
+  .table--stack td { padding-left: 0; }
+  .table--stack td::before { position: static; display: block; width: auto; margin-bottom: 0.1rem; }
+  .panel { padding: var(--s-4); }
 }
 
 /* Definition lists for record details */
@@ -921,7 +932,7 @@ select.input {
 .badge-count {
   position: absolute; top: 0.3rem; right: 0.25rem;
   min-width: 1.15rem; height: 1.15rem; padding: 0 0.3rem;
-  border-radius: 999px; background: var(--coral); color: #fff;
+  border-radius: 999px; background: var(--coral-text); color: #fff;
   font-family: var(--font-mono); font-size: 0.68rem; font-weight: 600; line-height: 1.15rem; text-align: center;
 }
 .badge-count[hidden] { display: none; }
