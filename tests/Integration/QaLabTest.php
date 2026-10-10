@@ -123,6 +123,7 @@ final class QaLabTest extends DatabaseTestCase
         $run = $this->qa()->run($this->qa()->recordCoverage($junit, $map));
         unlink($map);
         unlink($junit);
+        $this->assertSame('coverage', $run['run_type'], 'Labelled separately from the raw PHPUnit import');
         $byCase = array_column($run['results'], 'status', 'case_code');
         $this->assertCount(3, $byCase);
         $this->assertSame('pass', $byCase['TC-SEC-002'], 'All data sets of the mapped test passed');

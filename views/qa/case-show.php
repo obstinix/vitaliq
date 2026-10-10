@@ -2,7 +2,7 @@
 use Vitaliq\Support\Labels;
 
 $c = $case;
-$runTypes = ['regex_suite' => 'Regex suite', 'manual' => 'Manual', 'phpunit' => 'PHPUnit'];
+$runTypes = ['regex_suite' => 'Regex suite', 'manual' => 'Manual', 'phpunit' => 'PHPUnit', 'coverage' => 'Coverage'];
 ?>
 <div class="app-head">
   <div>

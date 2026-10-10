@@ -1,6 +1,6 @@
 <?php
 $t = $summary['totals'];
-$runLabels = ['regex_suite' => 'Regex suite', 'phpunit' => 'PHPUnit import', 'manual' => 'Manual execution'];
+$runLabels = ['regex_suite' => 'Regex suite', 'phpunit' => 'PHPUnit import', 'coverage' => 'Catalogue coverage', 'manual' => 'Manual execution'];
 ?>
 <div class="app-head">
   <div>

@@ -417,7 +417,7 @@ final class QaService
         return $this->app->db->transaction(function (Database $db) use ($map, $outcomes, $started): int {
             $runId = $db->insert(
                 'INSERT INTO qa_runs (run_type, triggered_from, started_at, environment, notes)
-                 VALUES (\'phpunit\', \'cli\', :s, :e, :n)',
+                 VALUES (\'coverage\', \'cli\', :s, :e, :n)',
                 ['s' => $started, 'e' => $this->environment(), 'n' => 'Catalogue cases evaluated from the PHPUnit JUnit report via automation-map.json']
             );
             $passed = $failed = $blocked = 0;
@@ -521,7 +521,7 @@ final class QaService
         }
         ksort($modules);
         $lastRuns = [];
-        foreach (['regex_suite', 'phpunit', 'manual'] as $type) {
+        foreach (['regex_suite', 'phpunit', 'coverage', 'manual'] as $type) {
             $lastRuns[$type] = $db->one(
                 'SELECT * FROM qa_runs WHERE run_type = :t ORDER BY id DESC LIMIT 1',
                 ['t' => $type]

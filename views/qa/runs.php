@@ -1,4 +1,4 @@
-<?php $runTypes = ['regex_suite' => 'Regex suite', 'manual' => 'Manual execution', 'phpunit' => 'PHPUnit import']; ?>
+<?php $runTypes = ['regex_suite' => 'Regex suite', 'manual' => 'Manual execution', 'phpunit' => 'PHPUnit import', 'coverage' => 'Catalogue coverage from PHPUnit']; ?>
 <div class="app-head">
   <div>
     <p class="eyebrow">STQA laboratory</p>
