@@ -189,6 +189,10 @@ main:focus { outline: none; }
 }
 
 .section { padding-block: var(--s-8); }
+@media (max-width: 40rem) {
+  .section { padding-block: var(--s-6); }
+  .page-head { padding-block: var(--s-6) var(--s-5); }
+}
 .section--tint { background: var(--paper-2); }
 .section--rule { border-top: 1px solid var(--rule); }
 .section + .section--rule { padding-top: var(--s-8); }
