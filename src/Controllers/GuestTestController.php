@@ -19,6 +19,7 @@ final class GuestTestController extends Controller
 {
     public const TRACK_MAX_PER_IP = 10;
     public const TRACK_WINDOW = 900;
+    public const SUBMIT_MAX_PER_IP = 10;
 
     public function form(Request $request): Response
     {
@@ -55,6 +56,12 @@ final class GuestTestController extends Controller
         if ($token !== '' && ($existing = $testing->findByIdempotencyKey($token)) !== null
             && in_array($existing['reference'], (array) $this->app->session()->get('guest_refs', []), true)) {
             return $this->redirect('/test/confirmation/' . $existing['reference']);
+        }
+        // Anonymous submissions are limited per connection to stop scripted
+        // request spam (a resubmission of the same form is handled above).
+        if (!$this->app->rateLimiter()->hit('guest-test-ip:' . $this->app->ipHash(), self::SUBMIT_MAX_PER_IP, 3600)) {
+            $this->flash('error', 'Too many requests have been submitted from this connection. Please try again in an hour, or sign in.');
+            return $this->renderForm([], $request->body, 429);
         }
         if (!$this->consumeFormToken('guest-test', $token)) {
             $this->flash('error', 'This form expired or was already submitted. Please check the details and submit again.');

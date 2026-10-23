@@ -16,6 +16,7 @@ final class AuthController extends Controller
 {
     public const RESET_MAX_PER_EMAIL = 3;
     public const RESET_MAX_PER_IP = 10;
+    public const REGISTER_MAX_PER_IP = 10;
 
     public function registerForm(Request $request): Response
     {
@@ -28,6 +29,17 @@ final class AuthController extends Controller
     public function register(Request $request): Response
     {
         $input = $request->body;
+        // Every attempt counts, so the form cannot be scripted to create
+        // accounts or to probe which emails and mobile numbers are registered.
+        if (!$this->app->rateLimiter()->hit('register-ip:' . $this->app->ipHash(), self::REGISTER_MAX_PER_IP, 3600)) {
+            unset($input['password'], $input['password_confirmation']);
+            return $this->view('auth/register', [
+                'title' => 'Create your account',
+                'states' => $this->app->service(PatientService::class)->states(),
+                'errors' => ['form' => 'Too many registration attempts from this connection. Please try again in an hour.'],
+                'old' => $input,
+            ], 429);
+        }
         try {
             $userId = $this->app->service(PatientService::class)->register($input);
         } catch (ValidationFailed $e) {
