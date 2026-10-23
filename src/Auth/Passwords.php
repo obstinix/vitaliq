@@ -20,7 +20,7 @@ final class Passwords
         'covid2020pass', 'india123456', 'monkey12345', 'football123', 'sunshine123',
     ];
 
-    public static function algorithm(): string|int|null
+    public static function algorithm(): string
     {
         return defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : PASSWORD_DEFAULT;
     }

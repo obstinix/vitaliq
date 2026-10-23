@@ -72,30 +72,39 @@ class Database
         return $stmt;
     }
 
-    /** @return array<string,mixed>|null */
+    /**
+     * @param array<string|int,mixed> $params
+     * @return array<string,mixed>|null
+     */
     public function one(string $sql, array $params = []): ?array
     {
         $row = $this->run($sql, $params)->fetch();
         return $row === false ? null : $row;
     }
 
-    /** @return list<array<string,mixed>> */
+    /**
+     * @param array<string|int,mixed> $params
+     * @return list<array<string,mixed>>
+     */
     public function all(string $sql, array $params = []): array
     {
         return $this->run($sql, $params)->fetchAll();
     }
 
+    /** @param array<string|int,mixed> $params */
     public function value(string $sql, array $params = []): mixed
     {
         $value = $this->run($sql, $params)->fetchColumn();
         return $value === false ? null : $value;
     }
 
+    /** @param array<string|int,mixed> $params */
     public function execute(string $sql, array $params = []): int
     {
         return $this->run($sql, $params)->rowCount();
     }
 
+    /** @param array<string|int,mixed> $params */
     public function insert(string $sql, array $params = []): int
     {
         $this->run($sql, $params);

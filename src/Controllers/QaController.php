@@ -26,7 +26,10 @@ final class QaController extends Controller
         ], 200, 'app');
     }
 
-    /** @param array<string,mixed>|null $result */
+    /**
+     * @param array<string,mixed>|null $result
+     * @param array<string,string> $errors
+     */
     private function renderValidator(string $rule, string $value, ?array $result = null, array $errors = [], int $status = 200): Response
     {
         $catalogue = $this->app->service(QaService::class)->catalogue(['kind' => 'regex'], 1, 500)['rows'];

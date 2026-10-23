@@ -54,8 +54,7 @@ final class Request
 
     public static function normalisePath(string $path): string
     {
-        $path = '/' . trim($path, '/');
-        return $path === '' ? '/' : $path;
+        return '/' . trim($path, '/');
     }
 
     /** String input from the body (POST) falling back to the query string. */

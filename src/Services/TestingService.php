@@ -536,7 +536,11 @@ final class TestingService
         return $request;
     }
 
-    /** Detail only if the request belongs to this patient account. */
+    /**
+     * Detail only if the request belongs to this patient account.
+     *
+     * @return array<string,mixed>|null
+     */
     public function detailForPatient(int $userId, int $requestId): ?array
     {
         $owned = $this->app->db->value(

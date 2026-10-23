@@ -13,19 +13,28 @@ final class Router
     /** @var list<array{method:string,regex:string,handler:array{0:class-string,1:string},middleware:list<string>,pattern:string}> */
     private array $routes = [];
 
-    /** @param list<string> $middleware */
+    /**
+     * @param array{0:class-string,1:string} $handler
+     * @param list<string> $middleware
+     */
     public function get(string $pattern, array $handler, array $middleware = []): void
     {
         $this->add('GET', $pattern, $handler, $middleware);
     }
 
-    /** @param list<string> $middleware */
+    /**
+     * @param array{0:class-string,1:string} $handler
+     * @param list<string> $middleware
+     */
     public function post(string $pattern, array $handler, array $middleware = []): void
     {
         $this->add('POST', $pattern, $handler, $middleware);
     }
 
-    /** @param list<string> $middleware */
+    /**
+     * @param array{0:class-string,1:string} $handler
+     * @param list<string> $middleware
+     */
     public function add(string $method, string $pattern, array $handler, array $middleware = []): void
     {
         $regex = preg_replace_callback('/\{(\w+)\}/', static function (array $m): string {

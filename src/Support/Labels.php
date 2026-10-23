@@ -164,6 +164,7 @@ final class Labels
         'functional' => 'Functional',
     ];
 
+    /** @param array<string,string> $map */
     public static function get(array $map, ?string $key): string
     {
         if ($key === null || $key === '') {

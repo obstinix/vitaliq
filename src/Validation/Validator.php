@@ -75,7 +75,7 @@ final class Validator
         return $value;
     }
 
-    /** @param array<string,string> $allowed whitelist (keys are valid values) */
+    /** @param array<array-key,string> $allowed whitelist (keys are valid values) */
     public function choice(string $field, array $allowed, string $label, bool $required = true): ?string
     {
         $value = trim($this->raw($field));
