@@ -62,6 +62,17 @@ What is implemented, and how each control was actually verified. "PHPUnit" means
 | Data minimisation | No ID, insurance or unrelated medical-history fields | Review of the forms against the requirements |
 | Audit trail | `audit_events` records sign-ins (including failures), registration, workflow changes, exports, user and phlebotomist administration, moderation and QA runs; details never include secrets | PHPUnit assertions on `audit_events` rows; browser review of `/admin/audit` |
 
+## Runtime and dependencies (audit of 23 Oct 2026)
+
+| Control | Implementation | Verified by |
+| --- | --- | --- |
+| Patched PHP | Runtime upgraded 8.4.25 to 8.4.27 (CVE-2026-109618/109619); Composer requires `~8.2.35 \|\| ~8.3.36 \|\| ~8.4.27 \|\| ^8.5.12`; `bin/check-runtime.php` | `RuntimeCheckTest`; `composer check-platform-reqs` fails on 8.4.25 and passes on 8.4.27 |
+| Dependency audit | `composer audit`, `npm audit` | Both clean |
+| Static analysis | PHPStan level 6 (`phpstan.neon.dist`) | No errors |
+| Registration and guest-request limits | 10 per hour per connection; failed attempts count | `AbuseLimitsTest` (3 tests); mutation check |
+
+Full details: [SECURITY_AUDIT_2026-10-23.md](SECURITY_AUDIT_2026-10-23.md).
+
 ## Configuration and deployment hygiene
 
 | Control | Implementation | Verified by |

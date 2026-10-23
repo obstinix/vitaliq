@@ -161,5 +161,50 @@
         "resolution": "Note is now a block with an absolutely positioned marker.",
         "resolved_on": "2026-10-10",
         "found_on": "2026-10-10"
+    },
+    {
+        "origin": "development_testing",
+        "status": "resolved",
+        "resolved_on": "2026-10-23",
+        "found_on": "2026-10-23",
+        "title": "Registration had no rate limit",
+        "description": "POST /register accepted unlimited attempts per connection, allowing scripted account creation and enumeration of registered emails and mobile numbers through the duplicate messages.",
+        "severity": "major",
+        "priority": "high",
+        "module": "Security",
+        "steps": "1. Submit /register repeatedly from one connection with different or already-registered details.",
+        "expected": "Attempts beyond a reasonable number are refused.",
+        "actual": "Every attempt was processed.",
+        "resolution": "10 attempts per hour per connection (failed attempts count); 429 response. Covered by AbuseLimitsTest."
+    },
+    {
+        "origin": "development_testing",
+        "status": "resolved",
+        "resolved_on": "2026-10-23",
+        "found_on": "2026-10-23",
+        "title": "Anonymous test requests had no rate limit",
+        "description": "POST /test/new accepted unlimited submissions per connection, so the admin queue and notifications could be flooded.",
+        "severity": "major",
+        "priority": "high",
+        "module": "Security",
+        "steps": "1. Submit /test/new repeatedly with fresh form tokens from one connection.",
+        "expected": "Submissions beyond a reasonable number are refused.",
+        "actual": "Every submission was processed.",
+        "resolution": "10 submissions per hour per connection; replays of an accepted form still return its confirmation. Covered by AbuseLimitsTest."
+    },
+    {
+        "origin": "development_testing",
+        "status": "resolved",
+        "resolved_on": "2026-10-23",
+        "found_on": "2026-10-23",
+        "title": "PHP runtime vulnerable to CVE-2026-109618/109619",
+        "description": "The local runtime was PHP 8.4.25; the critical RCE fixes (GHSA-w8hw-w9fx-j79w, GHSA-6wmf-4rv5-p3rp) ship in 8.2.35, 8.3.36, 8.4.27 and 8.5.12. composer.json allowed any PHP >= 8.2.",
+        "severity": "critical",
+        "priority": "high",
+        "module": "Runtime",
+        "steps": "1. php -v\n2. Compare with the fixed releases.",
+        "expected": "A fixed PHP release, enforced at install time.",
+        "actual": "8.4.25, and nothing prevented installing on a vulnerable PHP.",
+        "resolution": "Runtime upgraded to 8.4.27 (SHA-256 verified); Composer platform constraint and bin/check-runtime.php added. Covered by RuntimeCheckTest."
     }
 ]

@@ -5,7 +5,7 @@
 | Item | Version or detail | How it was obtained |
 | --- | --- | --- |
 | OS | Windows 11 Home Single Language 10.0.26300, x64, standard (non-admin) user | Already present |
-| PHP | 8.4.25 ZTS x64 | `winget install --id PHP.PHP.8.4 --scope user` |
+| PHP | 8.4.27 ZTS x64 (upgraded from 8.4.25 on 23 Oct 2026 for CVE-2026-109618/109619) | Official `php-8.4.27-Win32-vs17-x64.zip` from windows.php.net, SHA-256 verified, unzipped to `C:\Users\Piyush\devtools\php-8.4.27` and put first on the user `PATH`. 8.4.25 was originally installed with `winget --scope user`. |
 | PHP extensions enabled | curl, fileinfo, intl, mbstring, openssl, pdo_mysql, pdo_sqlite, sodium, sqlite3, zip (plus built-ins: json, ctype, filter, session) | `php.ini` derived from `php.ini-development`. Required by the app: pdo_mysql, mbstring, openssl. |
 | Database | MariaDB 11.4.13 LTS | Official portable zip from downloads.mariadb.org; SHA-256 matched the value published by the MariaDB REST API. Initialised with `mariadb-install-db` and bound to 127.0.0.1. |
 | Composer | 2.10.3 | Official installer, SHA-384 verified against composer.github.io/installer.sig |
@@ -18,8 +18,10 @@
 
 ### Windows, no administrator rights
 
-```powershell
-winget install --id PHP.PHP.8.4 --scope user
+Install a **patched** release: 8.2.35, 8.3.36, 8.4.27 or 8.5.12 or later. Older releases are vulnerable to CVE-2026-109618/109619. Use winget if it offers a patched version (`winget install --id PHP.PHP.8.4 --scope user`), otherwise the official zip from <https://windows.php.net/download/>, checking it against `sha256sum.txt`. Afterwards confirm with:
+
+```bash
+php bin/check-runtime.php
 ```
 
 1. Copy `php.ini-development` to `php.ini` in the PHP folder.

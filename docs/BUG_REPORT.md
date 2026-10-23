@@ -15,6 +15,9 @@ Defects found while building and testing Vitaliq on 10 Oct 2026. Every entry was
 | DEF-009 | Text contrast below WCAG AA for badges and sidebar labels | Accessibility | Major | Lighthouse on `/admin`: accessibility 96, colour-contrast failures | Resolved |
 | DEF-010 | Wordmark link name did not contain its visible text (WCAG 2.5.3) | Accessibility | Minor | Lighthouse on `/statistics`: label-content-name-mismatch | Resolved |
 | DEF-011 | Platform figures note broke into columns | Interface | Trivial | Visual review of the homepage | Resolved |
+| DEF-012 | Registration had no rate limit (account spam, email/mobile enumeration) | Security | Medium | Security audit, 23 Oct 2026 | Resolved |
+| DEF-013 | Anonymous test requests had no rate limit (queue spam) | Security | Medium | Security audit, 23 Oct 2026 | Resolved |
+| DEF-014 | Runtime PHP 8.4.25 vulnerable to CVE-2026-109618/109619 | Runtime | Critical | Security audit, 23 Oct 2026 | Resolved (local runtime upgraded; deployments must use a fixed release) |
 
 There are no open product defects.
 
@@ -79,6 +82,10 @@ There are no open product defects.
 - **Actual.** `display: flex` turned each text node and the link into flex items, so the note rendered as narrow columns.
 - **Fix.** Block layout with a positioned marker.
 - **Re-test.** Visual check.
+
+### DEF-012 to DEF-014: security audit of 23 Oct 2026
+
+See [SECURITY_AUDIT_2026-10-23.md](SECURITY_AUDIT_2026-10-23.md) for steps, fixes and regression tests (`AbuseLimitsTest`, `RuntimeCheckTest`).
 
 ## Test-script defects
 

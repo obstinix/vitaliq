@@ -52,7 +52,7 @@ Mobile layout of the request form: [docs/screenshots/mobile-request-form.png](do
 
 | Layer | Choice |
 | --- | --- |
-| Server | PHP 8.2+ (tested on 8.4.25). No framework and no runtime Composer packages. |
+| Server | PHP 8.2.35+, 8.3.36+, 8.4.27+ or 8.5.12+ (tested on 8.4.27). Earlier releases are vulnerable to CVE-2026-109618/109619. No framework and no runtime Composer packages. |
 | Database | MariaDB 10.6+ or MySQL 8 (tested on MariaDB 11.4.13), accessed through PDO with native prepared statements |
 | Front end | Server-rendered HTML, one CSS file built on design tokens, plain ES modules |
 | Motion | GSAP 3.15 with ScrollTrigger, on public pages only and disabled for `prefers-reduced-motion` |
@@ -87,7 +87,7 @@ More detail is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/DATABAS
 
 Requirements:
 
-- PHP 8.2+ with the `pdo_mysql`, `mbstring` and `openssl` extensions. Passwords use Argon2id when PHP provides it, as the tested build did, and fall back to bcrypt otherwise.
+- PHP 8.2.35+, 8.3.36+, 8.4.27+ or 8.5.12+ (earlier releases are vulnerable to CVE-2026-109618/109619; `php bin/check-runtime.php` checks this) with the `pdo_mysql`, `mbstring` and `openssl` extensions. Passwords use Argon2id when PHP provides it, as the tested build did, and fall back to bcrypt otherwise.
 - MariaDB 10.6+ or MySQL 8
 - Composer and Node 18+, needed only for the tests
 
@@ -191,7 +191,7 @@ Latest recorded results (10 Oct 2026) are in [docs/TEST_EXECUTION_REPORT.md](doc
 - CSRF tokens on every POST. No state changes over GET.
 - Every dynamic value is escaped with `e()`. The CSP is `script-src 'self'`, with no inline scripts or style attributes.
 - Single-use reset and invite tokens expire and are stored as SHA-256 hashes. The forgot-password response is identical whether or not an account exists.
-- Rate limits on sign-in, reset, tracking, linking and comments. IP addresses are stored only as keyed hashes.
+- Rate limits on sign-in, registration, reset, guest test requests, tracking, linking and comments. IP addresses are stored only as keyed hashes.
 - CSV exports neutralise spreadsheet formulas. An audit log records administrative and security events.
 
 What was verified, and how, is in [docs/SECURITY_CHECKLIST.md](docs/SECURITY_CHECKLIST.md). Vitaliq has **not** had a regulatory compliance assessment (for example HIPAA or GDPR) and makes no claim of compliance.
@@ -206,7 +206,7 @@ What was verified, and how, is in [docs/SECURITY_CHECKLIST.md](docs/SECURITY_CHE
 
 ## Project status
 
-Feature-complete for the STQA brief and verified locally on Windows 11 with PHP 8.4.25 and MariaDB 11.4.13. It is not deployed to any public host.
+Feature-complete for the STQA brief and verified locally on Windows 11 with PHP 8.4.27 and MariaDB 11.4.13. A security audit on 23 Oct 2026 is in [docs/SECURITY_AUDIT_2026-10-23.md](docs/SECURITY_AUDIT_2026-10-23.md). It is not deployed to any public host.
 
 ## Documentation
 
@@ -222,6 +222,7 @@ Feature-complete for the STQA brief and verified locally on Windows 11 with PHP 
 | [ENVIRONMENT_SETUP](docs/ENVIRONMENT_SETUP.md) | Installing and running |
 | [TEST_PLAN](docs/TEST_PLAN.md), [TEST_CASES](docs/TEST_CASES.md), [TEST_EXECUTION_REPORT](docs/TEST_EXECUTION_REPORT.md), [BUG_REPORT](docs/BUG_REPORT.md) | STQA deliverables |
 | [SECURITY_CHECKLIST](docs/SECURITY_CHECKLIST.md) | Controls and verification |
+| [SECURITY_AUDIT_2026-10-23](docs/SECURITY_AUDIT_2026-10-23.md) | PHP CVE patching, dependency audit, fixes and verification |
 | [WORK_LOG](docs/WORK_LOG.md) | Implementation log |
 
 ## Licence
