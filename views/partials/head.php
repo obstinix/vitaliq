@@ -12,3 +12,6 @@
 <link rel="preload" href="<?= e(url('/assets/fonts/geist-variable.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="<?= e(url('/assets/fonts/junicode-vitaliq-subset.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="<?= e(asset('css/vitaliq.css')) ?>">
+<?php if (!empty($appCss)): ?>
+<link rel="stylesheet" href="<?= e(asset('css/app.css')) ?>">
+<?php endif; ?>

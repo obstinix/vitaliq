@@ -32,6 +32,11 @@ function initNav() {
     toggle.setAttribute('aria-expanded', String(open));
     nav.classList.toggle('is-open', open);
   });
+  $('[data-nav-close]')?.addEventListener('click', () => {
+    nav.classList.remove('is-open');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.focus();
+  });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && nav.classList.contains('is-open')) {
       nav.classList.remove('is-open');

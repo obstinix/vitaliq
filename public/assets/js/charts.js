@@ -71,14 +71,14 @@ function drawDaily(container, data) {
     .attr('transform', `translate(${m.left},0)`)
     .call(d3.axisLeft(y).ticks(4).tickFormat((v) => (Number.isInteger(v) ? v : '')).tickSizeOuter(0));
 
-  const green = css('--green');
-  const coral = css('--coral');
-  const area = d3.area().x((d) => x(d.date)).y0(y(0)).y1((d) => y(d.submitted)).curve(d3.curveMonotoneX);
-  svg.append('path').datum(rows).attr('d', area).attr('fill', css('--green-wash'));
+  // Inside the app the one data hue is teal; released results are drawn in grey ink.
+  const inApp = document.body.classList.contains('layout-app');
+  const green = inApp ? css('--accent') : css('--green');
+  const coral = inApp ? css('--muted') : css('--coral');
 
   const series = [['submitted', green, 2.25, null], ['released', coral, 2, '5 4']];
   series.forEach(([key, color, w, dash]) => {
-    const line = d3.line().x((d) => x(d.date)).y((d) => y(d[key])).curve(d3.curveMonotoneX);
+    const line = d3.line().x((d) => x(d.date)).y((d) => y(d[key])).curve(d3.curveLinear);
     const path = svg.append('path').datum(rows)
       .attr('d', line).attr('fill', 'none').attr('stroke', color).attr('stroke-width', w)
       .attr('stroke-linecap', 'round');

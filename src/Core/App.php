@@ -8,6 +8,7 @@ use PDOException;
 use RuntimeException;
 use Throwable;
 use Vitaliq\Auth\Auth;
+use Vitaliq\Auth\Permissions;
 
 /**
  * Application kernel: owns configuration, the database handle and the
@@ -93,6 +94,16 @@ final class App
         }
         /** @var T */
         return $this->services[$class];
+    }
+
+    public function permissions(): Permissions
+    {
+        return $this->services[Permissions::class] ??= new Permissions($this);
+    }
+
+    public function can(string $permission): bool
+    {
+        return $this->permissions()->allows($this->auth()->user(), $permission);
     }
 
     public function rateLimiter(): RateLimiter
@@ -189,6 +200,15 @@ final class App
                 if (!in_array($auth->role(), $roles, true)) {
                     throw new HttpException(403);
                 }
+            }
+        }
+
+        if ($name === 'perm') {
+            if (!$auth->check()) {
+                return $this->runMiddleware('auth', $request);
+            }
+            if (!$this->can($arg)) {
+                throw new HttpException(403);
             }
         }
         return null;

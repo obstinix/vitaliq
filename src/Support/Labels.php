@@ -110,6 +110,8 @@ final class Labels
         'phlebotomist' => 'Phlebotomist',
         'admin' => 'Administrator',
         'qa' => 'QA analyst',
+        'lab' => 'Laboratory staff',
+        'officer' => 'Public-health officer',
     ];
 
     public const COMMENT_TOPICS = [

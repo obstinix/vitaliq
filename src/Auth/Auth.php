@@ -39,7 +39,7 @@ final class Auth
             return null;
         }
         $row = $this->app->db->one(
-            'SELECT id, role, full_name, email, mobile, is_active, session_version FROM users WHERE id = :id',
+            'SELECT id, role, full_name, email, mobile, locale, accessibility_mode, is_active, session_version FROM users WHERE id = :id',
             ['id' => $id]
         );
         if ($row === null || (int) $row['is_active'] !== 1
@@ -77,6 +77,8 @@ final class Auth
             'admin' => '/admin',
             'phlebotomist' => '/staff',
             'qa' => '/qa',
+            'lab' => '/lab',
+            'officer' => '/surveillance',
             default => '/patient',
         };
     }

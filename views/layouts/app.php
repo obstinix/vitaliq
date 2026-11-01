@@ -1,78 +1,69 @@
 <?php
 use Vitaliq\Support\Labels;
+use Vitaliq\Support\Navigation;
 
 $user = $currentUser;
 $path = $currentPath ?? '/';
-$navs = [
-    'patient' => [
-        'Your care' => [
-            '/patient' => 'Dashboard',
-            '/patient/requests/new' => 'Request a test',
-            '/patient/requests' => 'Testing history',
-            '/patient/link' => 'Link a request',
-        ],
-    ],
-    'phlebotomist' => [
-        'Field work' => ['/staff' => 'Your collections'],
-    ],
-    'admin' => [
-        'Operations' => [
-            '/admin' => 'Dashboard',
-            '/admin/requests' => 'Requests',
-            '/admin/reports' => 'Reports',
-            '/admin/phlebotomists' => 'Phlebotomists',
-        ],
-        'Community' => [
-            '/admin/comments' => 'Comments',
-            '/admin/announcements' => 'Announcements',
-        ],
-        'Governance' => [
-            '/admin/users' => 'Users',
-            '/admin/audit' => 'Audit log',
-            '/qa' => 'STQA lab',
-        ],
-    ],
-    'qa' => [
-        'STQA lab' => [
-            '/qa' => 'Overview',
-            '/qa/validator' => 'Rule tester',
-            '/qa/cases' => 'Test cases',
-            '/qa/runs' => 'Executions',
-            '/qa/defects' => 'Defects',
-        ],
-    ],
-];
-$sections = $navs[$user['role']] ?? [];
-if ($user['role'] === 'admin' && str_starts_with($path, '/qa')) {
-    $sections = $navs['qa'] + ['Operations' => ['/admin' => 'Back to operations']];
-}
-$sections['Account'] = ['/account' => 'Profile', '/account/password' => 'Password', '/notifications' => 'Notifications'];
-
-/* Longest matching prefix wins, so /patient/requests/12 highlights "Testing history". */
-$active = '';
-foreach ($sections as $links) {
-    foreach (array_keys($links) as $href) {
-        if (($path === $href || str_starts_with($path, $href . '/')) && strlen($href) > strlen($active)) {
-            $active = $href;
-        }
-    }
-}
+$sections = Navigation::for($user['role'], app()->router, static fn (string $p): bool => app()->can($p), $path);
+$active = Navigation::active($sections, $path);
+$words = preg_split('/\s+/', trim((string) $user['full_name'])) ?: [];
+$initials = implode('', array_map(static fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)), array_slice($words, 0, 2)));
+$getRoutes = array_column(array_filter(app()->router->list(), static fn ($r) => $r['method'] === 'GET'), 'pattern');
+$hasSearch = in_array('/search', $getRoutes, true);
+$locale = (string) ($user['locale'] ?? 'en');
+$a11y = (int) ($user['accessibility_mode'] ?? 0) === 1;
 ?>
 <!doctype html>
-<html lang="en-IN">
+<html lang="<?= e($locale . '-IN') ?>">
 <head>
-<?= $view->partial('head', ['title' => $title ?? 'Vitaliq']) ?>
+<?= $view->partial('head', ['title' => $title ?? 'Vitaliq', 'appCss' => true]) ?>
 </head>
-<body class="layout-app" data-poll="<?= (int) ($pollSeconds ?? 30) ?>">
+<body class="layout-app<?= $a11y ? ' a11y-mode' : '' ?>" data-poll="<?= (int) ($pollSeconds ?? 30) ?>">
 <a class="skip-link" href="#main">Skip to content</a>
-<header class="app-bar">
-  <div class="wrap app-bar__inner">
-    <?= $view->partial('wordmark', ['href' => '/']) ?>
-    <span class="role-pill"><?= e(Labels::get(Labels::ROLES, $user['role'])) ?></span>
-    <div class="app-bar__actions">
+<div class="vq-app">
+  <aside class="vq-side" id="vq-side" aria-label="Main navigation">
+    <div class="vq-side__head">
+      <a class="vq-brand" href="<?= e(url(app()->auth()->homePath())) ?>">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="6" fill="#1b6f73"/><path d="M6.5 7.5 12 17l5.5-9.5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17.5" cy="7.5" r="1.6" fill="#9fd6c4"/></svg>
+        <b>Vitaliq</b>
+      </a>
+      <button class="icon-button vq-close" type="button" data-nav-close aria-label="Close menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <p class="vq-scope"><strong><?= e(Labels::get(Labels::ROLES, $user['role'])) ?></strong><?= e($scopeLabel ?? 'Vitaliq health network') ?></p>
+    <nav class="vq-nav" aria-label="Section">
+      <?php foreach ($sections as $heading => $links): ?>
+        <h2><?= e($heading) ?></h2>
+        <ul>
+          <?php foreach ($links as $link): ?>
+            <li><a href="<?= e(url($link['href'])) ?>"<?= $link['href'] === $active ? ' aria-current="page"' : '' ?>><?= Navigation::icon($link['icon']) ?><span><?= e($link['label']) ?></span></a></li>
+          <?php endforeach; ?>
+        </ul>
+      <?php endforeach; ?>
+    </nav>
+    <div class="vq-user">
+      <span class="vq-avatar" aria-hidden="true"><?= e($initials) ?></span>
+      <span><?= e($user['full_name']) ?><small><?= e($user['email']) ?></small></span>
+    </div>
+  </aside>
+
+  <header class="vq-top">
+    <button class="icon-button vq-menu-btn" type="button" aria-expanded="false" aria-controls="vq-side" data-nav-toggle>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      <span class="visually-hidden">Menu</span>
+    </button>
+    <?php if ($hasSearch): ?>
+      <form class="vq-search" method="get" action="<?= e(url('/search')) ?>" role="search">
+        <?= Navigation::icon('search') ?>
+        <label class="visually-hidden" for="vq-q">Search</label>
+        <input id="vq-q" name="q" type="search" maxlength="80" placeholder="Search patients, references, samples" value="<?= e($searchQuery ?? '') ?>">
+      </form>
+    <?php endif; ?>
+    <div class="vq-top__actions">
       <div class="menu-wrap" data-bell>
         <button class="icon-button" type="button" aria-expanded="false" aria-controls="bell-panel" data-bell-toggle>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <?= Navigation::icon('bell') ?>
           <span class="visually-hidden" data-bell-label>Notifications, <?= (int) $unreadCount ?> unread</span>
           <span class="badge-count" data-bell-count<?= $unreadCount > 0 ? '' : ' hidden' ?> aria-hidden="true"><?= (int) $unreadCount ?></span>
         </button>
@@ -111,22 +102,9 @@ foreach ($sections as $links) {
         </div>
       </div>
     </div>
-  </div>
-</header>
-<div class="app-shell">
-  <aside class="side-nav">
-    <nav aria-label="Section">
-      <?php foreach ($sections as $heading => $links): ?>
-        <h2><?= e($heading) ?></h2>
-        <ul>
-          <?php foreach ($links as $href => $label): ?>
-            <li><a href="<?= e(url($href)) ?>"<?= $href === $active ? ' aria-current="page"' : '' ?>><?= e($label) ?></a></li>
-          <?php endforeach; ?>
-        </ul>
-      <?php endforeach; ?>
-    </nav>
-  </aside>
-  <main id="main" class="app-main" tabindex="-1">
+  </header>
+
+  <main id="main" class="vq-sheet" tabindex="-1">
     <?= $view->partial('flash', ['flash' => $flash ?? []]) ?>
     <?= $content ?>
   </main>
