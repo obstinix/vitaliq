@@ -116,7 +116,8 @@ final class App
         return $this->services[Mailer::class] ??= new Mailer(
             (string) $this->config['mail']['driver'],
             (string) $this->config['mail']['from'],
-            VQ_ROOT . '/storage/mail'
+            VQ_ROOT . '/storage/mail',
+            $this->config['mail']
         );
     }
 
@@ -149,6 +150,8 @@ final class App
                 throw new HttpException(419);
             }
             $this->auth()->enforceIdleTimeout((int) $this->config['session']['idle_minutes']);
+            $user = $this->auth()->user();
+            \Vitaliq\Support\Lang::set((string) ($user['locale'] ?? $session->get('locale', 'en')));
 
             foreach ($match['route']['middleware'] as $middleware) {
                 $blocked = $this->runMiddleware($middleware, $request);

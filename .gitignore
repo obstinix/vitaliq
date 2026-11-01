@@ -34,3 +34,5 @@ Thumbs.db
 !/storage/backups/.gitkeep
 /storage/imports/*
 !/storage/imports/.gitkeep
+/storage/messages/*
+!/storage/messages/.gitkeep

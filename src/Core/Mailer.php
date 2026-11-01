@@ -5,17 +5,20 @@ declare(strict_types=1);
 namespace Vitaliq\Core;
 
 /**
- * Outgoing mail. No SMTP transport is configured in this project:
+ * Outgoing mail for account emails (password reset, invitations):
  *  - "outbox" writes RFC 822 files to storage/mail for local development;
+ *  - "smtp" delivers through the configured SMTP server;
  *  - "none" drops messages.
- * Neither driver delivers email to a real inbox, and the UI never claims it did.
+ * The UI never claims a message reached an inbox.
  */
 final class Mailer
 {
+    /** @param array<string,mixed> $smtp host, port, encryption, username, password */
     public function __construct(
         private readonly string $driver,
         private readonly string $from,
         private readonly string $outboxDirectory,
+        private readonly array $smtp = [],
     ) {
     }
 
@@ -27,6 +30,19 @@ final class Mailer
     /** @return bool true when the message was written to the local outbox */
     public function send(string $to, string $subject, string $text): bool
     {
+        if ($this->driver === 'smtp') {
+            try {
+                (new \Vitaliq\Messaging\SmtpTransport([
+                    'host' => (string) ($this->smtp['host'] ?? ''), 'port' => (int) ($this->smtp['port'] ?? 587),
+                    'encryption' => (string) ($this->smtp['encryption'] ?? 'tls'), 'username' => (string) ($this->smtp['username'] ?? ''),
+                    'password' => (string) ($this->smtp['password'] ?? ''), 'from' => $this->from,
+                ]))->send($to, $subject, $text);
+                return true;
+            } catch (\RuntimeException $e) {
+                error_log('Vitaliq mail failed: ' . $e->getMessage());
+                return false;
+            }
+        }
         if ($this->driver !== 'outbox') {
             return false;
         }

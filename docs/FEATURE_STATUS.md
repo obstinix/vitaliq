@@ -51,14 +51,14 @@ Statuses: NOT STARTED, IN PROGRESS, IMPLEMENTED, TESTED, PUSHED, BLOCKED. "Tests
 
 | # | Feature | Status | Routes | Tests |
 | --- | --- | --- | --- | --- |
-| 31 | Email | NOT STARTED | | |
-| 32 | SMS | NOT STARTED | | |
-| 33 | WhatsApp | NOT STARTED | | |
-| 34 | Real-time updates (SSE or polling) | NOT STARTED | | |
-| 35 | Preferences | NOT STARTED | | |
-| 36 | Reminders | NOT STARTED | | |
-| 37 | Broadcast | NOT STARTED | | |
-| 38 | EN/HI/MR translations | NOT STARTED | | |
+| 31 | Email | PUSHED · live sending BLOCKED (needs SMTP credentials) | `MAIL_DRIVER=smtp`, `bin/notify-worker.php` | NotificationChannelsTest::testNothingLeavesTheAppUntilTheUserOptsIn, testSmtpMessageIsSafeAndEncoded |
+| 32 | SMS | PUSHED · live sending BLOCKED (needs Twilio account) | `SMS_DRIVER=twilio` | NotificationChannelsTest::testTwilioSmsAndWhatsAppWithRetries |
+| 33 | WhatsApp | PUSHED · live sending BLOCKED (needs Twilio WhatsApp sender) | `WHATSAPP_DRIVER=twilio` | NotificationChannelsTest::testTwilioSmsAndWhatsAppWithRetries |
+| 34 | Real-time updates (SSE or polling) | PUSHED | `/api/notifications/stream` (SSE), `/api/notifications` (polling fallback) | NotificationChannelsTest::testEventStreamReportsUnreadAndNewSinceLastId |
+| 35 | Preferences | PUSHED | `/account/preferences` | NotificationChannelsTest::testNothingLeavesTheAppUntilTheUserOptsIn |
+| 36 | Reminders | PUSHED | `bin/notify-worker.php` | PatientPlatformTest::testAppointmentBookingRulesAndCalendar |
+| 37 | Broadcast | PUSHED | `/admin/broadcasts` | NotificationChannelsTest::testBroadcastReachesItsAudienceOnly |
+| 38 | EN/HI/MR translations | PUSHED · partial coverage (shell, navigation, patient overview, preferences, public header) | `/locale`, `/account/preferences` | NotificationChannelsTest::testLanguageAndAccessibilityPreferences |
 
 ## E. Administration
 

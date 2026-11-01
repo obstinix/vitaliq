@@ -38,6 +38,23 @@ final class Config
             'mail' => [
                 'driver' => (string) Env::get('MAIL_DRIVER', 'none'),
                 'from' => (string) Env::get('MAIL_FROM', 'no-reply@vitaliq.example'),
+                'host' => (string) Env::get('MAIL_HOST', ''),
+                'port' => (int) Env::get('MAIL_PORT', 587),
+                'encryption' => (string) Env::get('MAIL_ENCRYPTION', 'tls'),
+                'username' => (string) Env::get('MAIL_USERNAME', ''),
+                'password' => (string) Env::get('MAIL_PASSWORD', ''),
+            ],
+            'sms' => [
+                'driver' => (string) Env::get('SMS_DRIVER', 'none'),
+                'account_sid' => (string) Env::get('TWILIO_ACCOUNT_SID', ''),
+                'auth_token' => (string) Env::get('TWILIO_AUTH_TOKEN', ''),
+                'from' => (string) Env::get('SMS_FROM', ''),
+            ],
+            'whatsapp' => [
+                'driver' => (string) Env::get('WHATSAPP_DRIVER', 'none'),
+                'account_sid' => (string) Env::get('TWILIO_ACCOUNT_SID', ''),
+                'auth_token' => (string) Env::get('TWILIO_AUTH_TOKEN', ''),
+                'from' => (string) Env::get('WHATSAPP_FROM', ''),
             ],
             'notification_poll_seconds' => max(10, (int) Env::get('NOTIFICATION_POLL_SECONDS', 30)),
             'teleconsult' => [

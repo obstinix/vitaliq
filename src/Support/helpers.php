@@ -185,3 +185,13 @@ function profile_query(array $profile): array
 {
     return ($profile['rel'] ?? 'self') === 'self' ? [] : ['for' => (int) $profile['id']];
 }
+
+/**
+ * Translate interface text into the current language (feature 38).
+ *
+ * @param array<string,string|int> $params
+ */
+function t(string $text, array $params = []): string
+{
+    return \Vitaliq\Support\Lang::get($text, $params);
+}

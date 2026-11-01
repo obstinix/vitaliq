@@ -157,11 +157,29 @@ function initBell() {
     clearInterval(timer);
     if (document.visibilityState === 'visible') timer = setInterval(poll, interval);
   };
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') poll();
+
+  // Server-sent events where the browser has them; each short stream says
+  // whether anything changed, and the list is fetched only then.
+  if ('EventSource' in window) {
+    const source = new EventSource(appUrl('/api/notifications/stream'), { withCredentials: true });
+    const onState = (e) => {
+      try {
+        const data = JSON.parse(e.data || '{}');
+        if (e.type === 'notification' || data.unread !== lastUnread) poll();
+      } catch (_) {
+        poll();
+      }
+    };
+    source.addEventListener('state', onState);
+    source.addEventListener('notification', onState);
+    window.addEventListener('pagehide', () => source.close());
+  } else {
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') poll();
+      schedule();
+    });
     schedule();
-  });
-  schedule();
+  }
   initPopover(wrap, '[data-bell-toggle]', poll);
 
   const markAll = $('[data-mark-all]', wrap);
@@ -344,6 +362,7 @@ function initConditional() {
 /* ----------------------------------------------------------- utilities */
 function initUtilities() {
   $$('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));
+  $$('select[data-autosubmit]').forEach((s) => s.addEventListener('change', () => s.form?.requestSubmit()));
   const summary = $('[data-error-summary]');
   if (summary) summary.focus();
 }

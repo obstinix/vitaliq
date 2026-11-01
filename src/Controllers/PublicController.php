@@ -133,4 +133,20 @@ final class PublicController extends Controller
             'old' => $old,
         ], $status);
     }
+
+    /** Choose the interface language (feature 38); remembered on the account when signed in. */
+    public function setLocale(Request $request): Response
+    {
+        $locale = $request->input('locale');
+        if (!isset(\Vitaliq\Support\Lang::LOCALES[$locale])) {
+            $locale = 'en';
+        }
+        $this->app->session()->set('locale', $locale);
+        $id = $this->app->auth()->id();
+        if ($id !== null) {
+            $this->app->db->execute('UPDATE users SET locale = :l WHERE id = :id', ['l' => $locale, 'id' => $id]);
+        }
+        $back = $request->input('back');
+        return $this->redirect(preg_match('#^/[A-Za-z0-9/_-]*$#', $back) ? $back : '/');
+    }
 }

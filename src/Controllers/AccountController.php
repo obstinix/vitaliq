@@ -69,4 +69,40 @@ final class AccountController extends Controller
         $this->flash('success', 'Password changed. Any other signed-in sessions have been signed out.');
         return $this->redirect('/account/password');
     }
+
+    /** Language, accessibility mode and outside notification channels (features 35, 38, 59). */
+    public function preferences(Request $request): Response
+    {
+        $delivery = $this->app->service(\Vitaliq\Services\DeliveryService::class);
+        $channels = $delivery->channels();
+        $status = [];
+        foreach (array_keys(\Vitaliq\Services\DeliveryService::CHANNELS) as $ch) {
+            $status[$ch] = ['enabled' => $channels->enabled($ch), 'live' => $channels->isLive($ch)];
+        }
+        return $this->view('account/preferences', [
+            'title' => t('Preferences'),
+            'prefs' => $delivery->preferences($this->userId()),
+            'recipients' => $delivery->recipients($this->userId()),
+            'channelStatus' => $status,
+            'recent' => $delivery->recentFor($this->userId(), 10),
+            'locales' => \Vitaliq\Support\Lang::LOCALES,
+        ], 200, 'app');
+    }
+
+    public function savePreferences(Request $request): Response
+    {
+        $locale = $request->input('locale');
+        $userId = $this->userId();
+        $this->app->db->execute('UPDATE users SET locale = :l, accessibility_mode = :a WHERE id = :id', [
+            'l' => isset(\Vitaliq\Support\Lang::LOCALES[$locale]) ? $locale : 'en',
+            'a' => $request->input('accessibility_mode') === '1' ? 1 : 0,
+            'id' => $userId,
+        ]);
+        $this->app->session()->set('locale', isset(\Vitaliq\Support\Lang::LOCALES[$locale]) ? $locale : 'en');
+        $this->app->service(\Vitaliq\Services\DeliveryService::class)->savePreferences($userId, $request->body);
+        $this->app->auth()->refresh();
+        \Vitaliq\Support\Lang::set(isset(\Vitaliq\Support\Lang::LOCALES[$locale]) ? $locale : 'en');
+        $this->flash('success', t('Preferences saved.'));
+        return $this->redirect('/account/preferences');
+    }
 }

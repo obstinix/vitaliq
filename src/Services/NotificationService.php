@@ -7,8 +7,10 @@ namespace Vitaliq\Services;
 use Vitaliq\Core\App;
 
 /**
- * Persistent in-app notifications. Delivery to the browser is by polling
- * GET /api/notifications; there is no push channel.
+ * Persistent in-app notifications. The browser learns about new ones from a
+ * short-lived server-sent event stream (GET /api/notifications/stream),
+ * falling back to polling GET /api/notifications. Outside channels (email,
+ * SMS, WhatsApp) are queued by DeliveryService when the user opted in.
  */
 final class NotificationService
 {
@@ -18,7 +20,7 @@ final class NotificationService
 
     public function notify(int $userId, string $type, string $title, string $body, ?string $link = null): int
     {
-        return $this->app->db->insert(
+        $id = $this->app->db->insert(
             'INSERT INTO notifications (user_id, type, title, body, link_path, created_at)
              VALUES (:u, :t, :ti, :b, :l, :c)',
             [
@@ -30,6 +32,26 @@ final class NotificationService
                 'c' => $this->app->clock->nowSql(),
             ]
         );
+        $this->app->service(DeliveryService::class)->enqueue($id, $userId, $type);
+        return $id;
+    }
+
+    /**
+
+     * Ids and unread count newer than $afterId, for the event stream.
+
+     *
+
+     * @return array{last:int,unread:int,new:int}
+
+     */
+    public function since(int $userId, int $afterId): array
+    {
+        $row = $this->app->db->one(
+            'SELECT COALESCE(MAX(id), 0) AS last, SUM(read_at IS NULL) AS unread, SUM(id > :a) AS new FROM notifications WHERE user_id = :u',
+            ['u' => $userId, 'a' => $afterId]
+        );
+        return ['last' => (int) ($row['last'] ?? 0), 'unread' => (int) ($row['unread'] ?? 0), 'new' => (int) ($row['new'] ?? 0)];
     }
 
     /** Fan out to every active user with the given role. Returns the count. */

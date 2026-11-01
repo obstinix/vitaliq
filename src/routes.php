@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Vitaliq\Controllers\AccountController;
+use Vitaliq\Controllers\Admin\AdminBroadcastController;
 use Vitaliq\Controllers\Admin\AdminCareController;
 use Vitaliq\Controllers\Admin\AdminCommentController;
 use Vitaliq\Controllers\Admin\AdminContentController;
@@ -43,6 +44,7 @@ return static function (Router $r): void {
     $r->get('/community', [PublicController::class, 'community']);
     $r->post('/community', [PublicController::class, 'postComment']);
     $r->get('/api/statistics', [PublicController::class, 'statisticsJson']);
+    $r->post('/locale', [PublicController::class, 'setLocale']);
 
     // QR health ID emergency card (public, token-gated)
     $r->get('/h/{token}', [HealthCardController::class, 'show']);
@@ -71,11 +73,14 @@ return static function (Router $r): void {
     $r->post('/account', [AccountController::class, 'updateProfile'], ['auth']);
     $r->get('/account/password', [AccountController::class, 'passwordForm'], ['auth']);
     $r->post('/account/password', [AccountController::class, 'changePassword'], ['auth']);
+    $r->get('/account/preferences', [AccountController::class, 'preferences'], ['auth']);
+    $r->post('/account/preferences', [AccountController::class, 'savePreferences'], ['auth']);
     $r->get('/notifications', [NotificationController::class, 'index'], ['auth']);
     $r->get('/notifications/{id}', [NotificationController::class, 'open'], ['auth']);
     $r->post('/notifications/{id}/read', [NotificationController::class, 'markRead'], ['auth']);
     $r->post('/notifications/read-all', [NotificationController::class, 'markAllRead'], ['auth']);
     $r->get('/api/notifications', [NotificationController::class, 'poll'], ['auth']);
+    $r->get('/api/notifications/stream', [NotificationController::class, 'stream'], ['auth']);
 
     // Patients
     $r->get('/patient', [PatientController::class, 'dashboard'], ['role:patient']);
@@ -139,6 +144,8 @@ return static function (Router $r): void {
     $r->get('/admin/appointments', [AdminCareController::class, 'appointments'], ['role:admin']);
     $r->post('/admin/appointments/{id}/status', [AdminCareController::class, 'setAppointmentStatus'], ['role:admin']);
     $r->get('/admin/feedback', [AdminCareController::class, 'feedback'], ['role:admin']);
+    $r->get('/admin/broadcasts', [AdminBroadcastController::class, 'index'], ['role:admin', 'perm:admin.broadcast']);
+    $r->post('/admin/broadcasts', [AdminBroadcastController::class, 'send'], ['role:admin', 'perm:admin.broadcast']);
     $r->post('/admin/feedback/{id}', [AdminCareController::class, 'reviewFeedback'], ['role:admin']);
     $r->get('/admin/reports', [AdminReportController::class, 'index'], ['role:admin']);
     $r->get('/admin/reports/export', [AdminReportController::class, 'export'], ['role:admin']);

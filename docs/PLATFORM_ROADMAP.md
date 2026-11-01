@@ -48,7 +48,7 @@ Granular permissions (feature 39) sit on top of roles. The role remains the defa
 | 2 | Patient platform (features 1–10) | PUSHED |
 | 3 | Laboratory operations (11–20) | PUSHED |
 | 4 | Public-health intelligence (21–30) | PUSHED |
-| 5 | Notifications and languages (31–38) | NOT STARTED |
+| 5 | Notifications and languages (31–38) | PUSHED |
 | 6 | Administration (39–45) | NOT STARTED |
 | 7 | Security (46–50) | NOT STARTED |
 | 8 | Advanced capabilities (51–60) | NOT STARTED |

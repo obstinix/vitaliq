@@ -56,6 +56,28 @@ final class NotificationController extends Controller
         return $this->redirect('/notifications');
     }
 
+    /**
+     * Server-sent events (feature 34). The stream answers at once with the
+     * current state and a retry hint, then closes; EventSource reconnects
+     * after the hint, sending Last-Event-ID. Short-lived streams keep a
+     * worker free on servers that cannot hold many open connections.
+     */
+    public function stream(Request $request): Response
+    {
+        $last = (int) ($request->header('last-event-id') ?: $request->query('last', '0'));
+        $state = $this->app->service(NotificationService::class)->since($this->userId(), max(0, $last));
+        $retry = max(5, (int) $this->app->config['notification_poll_seconds']) * 1000;
+        $body = 'retry: ' . $retry . "\n";
+        $body .= 'id: ' . $state['last'] . "\n";
+        $body .= 'event: ' . ($state['new'] > 0 && $last > 0 ? 'notification' : 'state') . "\n";
+        $body .= 'data: ' . json_encode(['unread' => $state['unread'], 'new' => $last > 0 ? $state['new'] : 0]) . "\n\n";
+        return (new Response($body, 200, [
+            'Content-Type' => 'text/event-stream; charset=UTF-8',
+            'Cache-Control' => 'no-store',
+            'X-Accel-Buffering' => 'no',
+        ]));
+    }
+
     /** Polled by the notification bell. */
     public function poll(Request $request): Response
     {
