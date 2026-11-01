@@ -28,6 +28,20 @@ final class Response
         ]);
     }
 
+    /** A file download. The name is reduced to safe characters for the header. */
+    public static function download(string $bytes, string $mime, string $filename, bool $inline = false): self
+    {
+        $safe = trim((string) preg_replace('/[^A-Za-z0-9._-]+/', '_', $filename), '_') ?: 'download';
+        return new self($bytes, 200, [
+            'Content-Type' => $mime,
+            'Content-Length' => (string) strlen($bytes),
+            'Content-Disposition' => ($inline ? 'inline' : 'attachment') . '; filename="' . $safe . '"',
+            'Cache-Control' => 'no-store, private',
+            'X-Content-Type-Options' => 'nosniff',
+            'Content-Security-Policy' => "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; sandbox",
+        ]);
+    }
+
     public static function redirect(string $location, int $status = 303): self
     {
         return new self('', $status, ['Location' => $location]);

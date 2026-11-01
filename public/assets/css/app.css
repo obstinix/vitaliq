@@ -352,3 +352,6 @@
 .layout-app .legend-released { background: var(--muted); }
 /* A button that is a link keeps its button colours. */
 .layout-app a.btn, .layout-app a.btn:hover { color: var(--btn-fg); text-decoration: none; }
+.qr-box { max-width: 220px; padding: 8px; background: #fff; border: 1px solid var(--border); border-radius: 8px; }
+.qr-box svg { display: block; width: 100%; height: auto; }
+.qr-box .dark { fill: var(--text); }

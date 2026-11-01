@@ -1,51 +1,94 @@
 <?php
-$first = explode(' ', (string) $currentUser['full_name'])[0];
+use Vitaliq\Services\AppointmentService;
+use Vitaliq\Support\Labels;
+
+/*
+ * Question: "What is happening with my tests, and what is next?"
+ * Biggest block: requests in progress, each drawn on the sample's path.
+ */
+$steps = ['submitted' => 'Requested', 'sample_collected' => 'Collected', 'in_progress' => 'Testing', 'completed' => 'Recorded', 'result_available' => 'Released'];
+$order = ['submitted' => 0, 'assigned' => 0, 'sample_collected' => 1, 'in_progress' => 2, 'completed' => 3, 'result_available' => 4];
+$next = $appointments[0] ?? null;
 ?>
 <div class="app-head">
   <div>
-    <p class="eyebrow">Patient dashboard</p>
-    <h1>Hello, <?= e($first) ?>.</h1>
-    <p><?= count($active) === 0 ? 'You have no requests in progress.' : (count($active) === 1 ? 'You have one request in progress.' : count($active) . ' requests are in progress.') ?></p>
+    <h1>Your health</h1>
+    <p>
+      <?= count($active) === 0 ? 'No tests in progress' : (count($active) === 1 ? 'One test in progress' : count($active) . ' tests in progress') ?>
+      · <?= $next === null ? 'no appointment booked' : 'next appointment ' . e(fmt_date($next['starts_at'], 'D j M, g:i a')) ?>.
+    </p>
   </div>
-  <a class="btn btn--primary" href="<?= e(url('/patient/requests/new')) ?>">Request a test</a>
+  <div class="cluster">
+    <a class="btn btn--secondary" href="<?= e(url('/patient/appointments/new')) ?>">Book an appointment</a>
+    <a class="btn btn--primary" href="<?= e(url('/patient/requests/new')) ?>">Request a test</a>
+  </div>
 </div>
 
-<div class="grid-2">
-  <div class="stack">
+<section class="kpis" aria-label="Your record at a glance">
+  <div class="kpi"><a href="<?= e(url('/patient/requests')) ?>"><span class="kpi__value"><?= count($active) ?></span><span class="kpi__label">Tests in progress</span></a></div>
+  <div class="kpi"><a href="<?= e(url('/patient/appointments')) ?>"><span class="kpi__value"><?= count($appointments) ?></span><span class="kpi__label">Upcoming appointments</span></a></div>
+  <div class="kpi"><a href="<?= e(url('/patient/passport')) ?>"><span class="kpi__value"><?= (int) $passportFilled ?><small>of <?= (int) $passportOf ?></small></span><span class="kpi__label">Passport sections filled</span></a></div>
+  <div class="kpi"><a href="<?= e(url('/patient/family')) ?>"><span class="kpi__value"><?= (int) $family ?></span><span class="kpi__label">Family profiles</span></a></div>
+</section>
+
+<div class="vq-grid">
+  <div class="span-8 stack">
     <section class="panel" aria-labelledby="current-title">
-      <div class="panel__head"><h2 id="current-title">Current requests</h2></div>
+      <div class="panel__head"><h2 id="current-title">Tests in progress</h2><a href="<?= e(url('/patient/requests')) ?>">All tests</a></div>
       <?php if ($active === []): ?>
-        <div class="empty">
-          <h3>Nothing in progress</h3>
-          <p>When you request a test it appears here with each step as it happens.</p>
-          <a class="btn btn--secondary" href="<?= e(url('/patient/requests/new')) ?>">Request a test</a>
-        </div>
+        <p class="empty">Nothing in progress. When you request a test, each step appears here as it happens.</p>
       <?php else: ?>
-        <?= $view->partial('requests-table', ['rows' => $active]) ?>
+        <ul class="rows">
+          <?php foreach ($active as $r): ?>
+            <?php $at = $order[$r['status']] ?? 0; ?>
+            <li class="request-row">
+              <div class="grow">
+                <a class="ref" href="<?= e(url('/patient/requests/' . (int) $r['id'])) ?>"><?= e($r['reference']) ?></a>
+                <span class="sub"><?= e(Labels::get(Labels::TEST_TYPES_SHORT, $r['test_type'])) ?> · <?= e(status_label($r['status'])) ?></span>
+                <ol class="path mt-4" aria-label="Progress">
+                  <?php $i = 0; foreach ($steps as $label): ?>
+                    <li class="<?= $i < $at ? 'done' : ($i === $at ? 'done now' : '') ?>"><?= e($label) ?></li>
+                  <?php $i++; endforeach; ?>
+                </ol>
+              </div>
+            </li>
+          <?php endforeach; ?>
+        </ul>
       <?php endif; ?>
     </section>
 
     <section class="panel" aria-labelledby="past-title">
-      <div class="panel__head">
-        <h2 id="past-title">Recent results and history</h2>
-        <a href="<?= e(url('/patient/requests')) ?>">Full history</a>
-      </div>
+      <div class="panel__head"><h2 id="past-title">Recent results</h2><a href="<?= e(url('/patient/timeline')) ?>">Timeline</a></div>
       <?php if ($past === []): ?>
-        <p class="muted mb-0">Completed, cancelled and rejected requests will be listed here.</p>
+        <p class="empty">Released, cancelled and rejected tests will be listed here.</p>
       <?php else: ?>
         <?= $view->partial('requests-table', ['rows' => $past]) ?>
       <?php endif; ?>
     </section>
   </div>
 
-  <div class="stack">
+  <div class="span-4 stack">
+    <section class="panel" aria-labelledby="appt-title">
+      <div class="panel__head"><h2 id="appt-title">Upcoming appointments</h2><a href="<?= e(url('/patient/appointments', ['view' => 'calendar'])) ?>">Calendar</a></div>
+      <?php if ($appointments === []): ?>
+        <p class="empty">None booked.</p>
+      <?php else: ?>
+        <ul class="rows">
+          <?php foreach ($appointments as $a): ?>
+            <li><span class="grow"><a href="<?= e(url('/patient/appointments/' . (int) $a['id'])) ?>"><?= e(AppointmentService::KINDS[$a['kind']]) ?></a><span class="sub"><?= e($a['full_name']) ?></span></span>
+              <time class="end num" datetime="<?= e(iso_datetime($a['starts_at'])) ?>"><?= e(fmt_date($a['starts_at'], 'j M')) ?><span class="sub"><?= e(fmt_date($a['starts_at'], 'g:i a')) ?></span></time></li>
+          <?php endforeach; ?>
+        </ul>
+      <?php endif; ?>
+    </section>
+
     <section class="panel" aria-labelledby="notes-title">
       <div class="panel__head"><h2 id="notes-title">Notifications</h2><a href="<?= e(url('/notifications')) ?>">All</a></div>
       <?php if ($notifications === []): ?>
-        <p class="muted mb-0">No notifications yet.</p>
+        <p class="empty">No notifications yet.</p>
       <?php else: ?>
         <ul class="note-list">
-          <?php foreach ($notifications as $n): ?>
+          <?php foreach (array_slice($notifications, 0, 4) as $n): ?>
             <li class="<?= $n['read_at'] === null ? 'unread' : '' ?>">
               <a href="<?= e(url('/notifications/' . (int) $n['id'])) ?>">
                 <span class="note-title"><?= e($n['title']) ?><?= $n['read_at'] === null ? '<span class="visually-hidden"> (unread)</span>' : '' ?></span>
@@ -64,16 +107,10 @@ $first = explode(' ', (string) $currentUser['full_name'])[0];
         <dl class="details">
           <dt>Name</dt><dd><?= e($patient['full_name']) ?></dd>
           <dt>Date of birth</dt><dd><?= e(fmt_date($patient['date_of_birth'])) ?></dd>
-          <dt>Mobile</dt><dd class="mono"><?= e(format_mobile($patient['mobile'])) ?></dd>
-          <dt>Email</dt><dd><?= e($patient['account_email']) ?></dd>
-          <dt>Address</dt><dd><?= $patient['city'] ? e(trim(($patient['address_line'] ? $patient['address_line'] . ', ' : '') . $patient['city'] . ', ' . ($patient['state_name'] ?? ''))) : '<span class="faint">Not added yet</span>' ?></dd>
+          <dt>Mobile</dt><dd class="num"><?= e(format_mobile($patient['mobile'])) ?></dd>
         </dl>
       <?php endif; ?>
+      <p class="hint mt-4">Tested before you registered? <a href="<?= e(url('/patient/link')) ?>">Link that request</a>.</p>
     </section>
-
-    <div class="callout callout--note">
-      <h3>Requested a test before you registered?</h3>
-      <p><a href="<?= e(url('/patient/link')) ?>">Link it to your account</a> to see it here.</p>
-    </div>
   </div>
 </div>

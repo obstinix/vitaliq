@@ -28,3 +28,9 @@ Thumbs.db
 /CLAUDE.md
 /.claude/
 /.taste-skill/
+/storage/vault/*
+!/storage/vault/.gitkeep
+/storage/backups/*
+!/storage/backups/.gitkeep
+/storage/imports/*
+!/storage/imports/.gitkeep

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Vitaliq\Controllers\AccountController;
+use Vitaliq\Controllers\Admin\AdminCareController;
 use Vitaliq\Controllers\Admin\AdminCommentController;
 use Vitaliq\Controllers\Admin\AdminContentController;
 use Vitaliq\Controllers\Admin\AdminDashboardController;
@@ -12,8 +13,10 @@ use Vitaliq\Controllers\Admin\AdminRequestController;
 use Vitaliq\Controllers\Admin\AdminUserController;
 use Vitaliq\Controllers\AuthController;
 use Vitaliq\Controllers\GuestTestController;
+use Vitaliq\Controllers\HealthCardController;
 use Vitaliq\Controllers\NotificationController;
 use Vitaliq\Controllers\PatientController;
+use Vitaliq\Controllers\PatientPortalController;
 use Vitaliq\Controllers\PublicController;
 use Vitaliq\Controllers\QaController;
 use Vitaliq\Controllers\StaffController;
@@ -38,6 +41,9 @@ return static function (Router $r): void {
     $r->get('/community', [PublicController::class, 'community']);
     $r->post('/community', [PublicController::class, 'postComment']);
     $r->get('/api/statistics', [PublicController::class, 'statisticsJson']);
+
+    // QR health ID emergency card (public, token-gated)
+    $r->get('/h/{token}', [HealthCardController::class, 'show']);
 
     // New-patient (guest) testing and tracking
     $r->get('/test/new', [GuestTestController::class, 'form']);
@@ -80,6 +86,36 @@ return static function (Router $r): void {
     $r->get('/patient/link', [PatientController::class, 'linkForm'], ['role:patient']);
     $r->post('/patient/link', [PatientController::class, 'link'], ['role:patient']);
 
+    // Patient platform (features 2-10)
+    $pp = PatientPortalController::class;
+    $p = ['role:patient'];
+    $r->get('/patient/family', [$pp, 'family'], $p);
+    $r->post('/patient/family', [$pp, 'addFamily'], $p);
+    $r->post('/patient/family/{id}/remove', [$pp, 'removeFamily'], $p);
+    $r->get('/patient/passport', [$pp, 'passport'], $p);
+    $r->post('/patient/passport', [$pp, 'savePassport'], $p);
+    $r->post('/patient/passport/immunisations', [$pp, 'addImmunisation'], $p);
+    $r->post('/patient/passport/immunisations/{id}/delete', [$pp, 'deleteImmunisation'], $p);
+    $r->get('/patient/contacts', [$pp, 'contacts'], $p);
+    $r->post('/patient/contacts', [$pp, 'addContact'], $p);
+    $r->post('/patient/contacts/{id}/primary', [$pp, 'primaryContact'], $p);
+    $r->post('/patient/contacts/{id}/delete', [$pp, 'deleteContact'], $p);
+    $r->get('/patient/appointments', [$pp, 'appointments'], $p);
+    $r->get('/patient/appointments/new', [$pp, 'newAppointment'], $p);
+    $r->post('/patient/appointments/new', [$pp, 'bookAppointment'], $p);
+    $r->get('/patient/appointments/{id}', [$pp, 'showAppointment'], $p);
+    $r->post('/patient/appointments/{id}/cancel', [$pp, 'cancelAppointment'], $p);
+    $r->get('/patient/health-id', [$pp, 'healthId'], $p);
+    $r->post('/patient/health-id', [$pp, 'issueHealthId'], $p);
+    $r->post('/patient/health-id/{id}/revoke', [$pp, 'revokeHealthId'], $p);
+    $r->get('/patient/documents', [$pp, 'documents'], $p);
+    $r->post('/patient/documents', [$pp, 'uploadDocument'], $p);
+    $r->get('/patient/documents/{id}', [$pp, 'downloadDocument'], $p);
+    $r->post('/patient/documents/{id}/delete', [$pp, 'deleteDocument'], $p);
+    $r->get('/patient/timeline', [$pp, 'timeline'], $p);
+    $r->get('/patient/feedback', [$pp, 'feedback'], $p);
+    $r->post('/patient/feedback', [$pp, 'sendFeedback'], $p);
+
     // Phlebotomist portal
     $r->get('/staff', [StaffController::class, 'tasks'], ['role:phlebotomist']);
     $r->get('/staff/tasks/{id}', [StaffController::class, 'task'], ['role:phlebotomist']);
@@ -97,6 +133,10 @@ return static function (Router $r): void {
     $r->post('/admin/requests/{id}/release', [AdminRequestController::class, 'release'], ['role:admin']);
     $r->post('/admin/requests/{id}/reject', [AdminRequestController::class, 'reject'], ['role:admin']);
     $r->post('/admin/requests/{id}/cancel', [AdminRequestController::class, 'cancel'], ['role:admin']);
+    $r->get('/admin/appointments', [AdminCareController::class, 'appointments'], ['role:admin']);
+    $r->post('/admin/appointments/{id}/status', [AdminCareController::class, 'setAppointmentStatus'], ['role:admin']);
+    $r->get('/admin/feedback', [AdminCareController::class, 'feedback'], ['role:admin']);
+    $r->post('/admin/feedback/{id}', [AdminCareController::class, 'reviewFeedback'], ['role:admin']);
     $r->get('/admin/reports', [AdminReportController::class, 'index'], ['role:admin']);
     $r->get('/admin/reports/export', [AdminReportController::class, 'export'], ['role:admin']);
     $r->get('/admin/phlebotomists', [AdminPhlebotomistController::class, 'index'], ['role:admin']);

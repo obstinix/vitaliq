@@ -40,6 +40,10 @@ final class Config
                 'from' => (string) Env::get('MAIL_FROM', 'no-reply@vitaliq.example'),
             ],
             'notification_poll_seconds' => max(10, (int) Env::get('NOTIFICATION_POLL_SECONDS', 30)),
+            'teleconsult' => [
+                // Jitsi-compatible server; rooms are created on first join.
+                'base_url' => rtrim((string) Env::get('TELECONSULT_BASE_URL', 'https://meet.jit.si'), '/'),
+            ],
         ];
     }
 }

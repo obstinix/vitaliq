@@ -45,7 +45,7 @@ Granular permissions (feature 39) sit on top of roles. The role remains the defa
 | --- | --- | --- |
 | 0 | Backup, audit, design direction, roadmap | PUSHED |
 | 1 | Design system, app shell, role-aware navigation, new roles | PUSHED |
-| 2 | Patient platform (features 1–10) | NOT STARTED |
+| 2 | Patient platform (features 1–10) | PUSHED |
 | 3 | Laboratory operations (11–20) | NOT STARTED |
 | 4 | Public-health intelligence (21–30) | NOT STARTED |
 | 5 | Notifications and languages (31–38) | NOT STARTED |

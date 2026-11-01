@@ -78,7 +78,7 @@ final class UserJourneysTest extends HttpTestCase
         $this->assertRedirectsTo('/patient', $response);
         $dashboard = $this->get('/patient');
         $this->assertSame(200, $dashboard->status);
-        $this->assertStringContainsString('Hello, Kavya.', $dashboard->body);
+        $this->assertStringContainsString('Kavya Menon', $dashboard->body);
 
         $form = $this->get('/patient/requests/new');
         $submit = $this->post('/patient/requests/new', $this->testInput() + ['form_token' => $this->hiddenField($form, 'form_token')]);

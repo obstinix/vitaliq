@@ -6,16 +6,16 @@ Statuses: NOT STARTED, IN PROGRESS, IMPLEMENTED, TESTED, PUSHED, BLOCKED. "Tests
 
 | # | Feature | Status | Routes | Tests |
 | --- | --- | --- | --- | --- |
-| 1 | Patient dashboard | NOT STARTED | | |
-| 2 | Health passport | NOT STARTED | | |
-| 3 | Family profiles | NOT STARTED | | |
-| 4 | Appointments | NOT STARTED | | |
-| 5 | Calendar | NOT STARTED | | |
-| 6 | QR health ID (revocable) | NOT STARTED | | |
-| 7 | Encrypted document vault | NOT STARTED | | |
-| 8 | Emergency contacts | NOT STARTED | | |
-| 9 | Health timeline | NOT STARTED | | |
-| 10 | Feedback | NOT STARTED | | |
+| 1 | Patient dashboard | PUSHED | `/patient` | PatientPlatformTest, UserJourneysTest |
+| 2 | Health passport | PUSHED | `/patient/passport` | PatientPlatformTest::testPassportValidatesAndSaves |
+| 3 | Family profiles | PUSHED | `/patient/family`, `?for=` on every patient page | PatientPlatformTest::testFamilyProfilesAreScopedToTheirHolder |
+| 4 | Appointments | PUSHED | `/patient/appointments`, `/admin/appointments` | PatientPlatformTest::testAppointmentBookingRulesAndCalendar, testCancellationNoticeAndStaffTransitions |
+| 5 | Calendar | PUSHED | `/patient/appointments?view=calendar`, `/admin/appointments` | PatientPlatformTest::testAppointmentBookingRulesAndCalendar |
+| 6 | QR health ID (revocable) | PUSHED | `/patient/health-id`, public `/h/{token}` | PatientPlatformTest::testQrHealthIdOpensCardUntilRevoked |
+| 7 | Encrypted document vault | PUSHED | `/patient/documents` | PatientPlatformTest::testDocumentVaultEncryptsAndScopesFiles |
+| 8 | Emergency contacts | PUSHED | `/patient/contacts` | PatientPlatformTest::testEmergencyContactsKeepExactlyOnePrimary |
+| 9 | Health timeline | PUSHED | `/patient/timeline` | PatientPlatformTest::testTimelineFeedbackAndDashboard |
+| 10 | Feedback | PUSHED | `/patient/feedback`, `/admin/feedback` | PatientPlatformTest::testTimelineFeedbackAndDashboard |
 
 ## B. Laboratory
 

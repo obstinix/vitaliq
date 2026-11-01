@@ -63,6 +63,7 @@ final class Navigation
             ],
             'Your records' => [
                 ['/patient/passport', 'Health passport', 'id'],
+                ['/patient/health-id', 'QR health ID', 'scan'],
                 ['/patient/family', 'Family profiles', 'users'],
                 ['/patient/documents', 'Document vault', 'lock'],
                 ['/patient/contacts', 'Emergency contacts', 'shield'],

@@ -164,3 +164,24 @@ function format_mobile(?string $mobile): string
     }
     return '+91 ' . substr($mobile, 0, 5) . ' ' . substr($mobile, 5);
 }
+
+/**
+ * Hidden field naming the family profile a patient form acts on.
+ *
+ * @param array<string,mixed> $profile
+ */
+function profile_field(array $profile): string
+{
+    return '<input type="hidden" name="profile_id" value="' . (int) $profile['id'] . '">';
+}
+
+/**
+ * Query for links that stay on the same family profile.
+ *
+ * @param array<string,mixed> $profile
+ * @return array<string,int>
+ */
+function profile_query(array $profile): array
+{
+    return ($profile['rel'] ?? 'self') === 'self' ? [] : ['for' => (int) $profile['id']];
+}

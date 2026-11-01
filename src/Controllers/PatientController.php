@@ -6,7 +6,9 @@ namespace Vitaliq\Controllers;
 
 use Vitaliq\Core\Request;
 use Vitaliq\Core\Response;
+use Vitaliq\Services\AppointmentService;
 use Vitaliq\Services\NotificationService;
+use Vitaliq\Services\PatientPlatformService;
 use Vitaliq\Services\PatientService;
 use Vitaliq\Services\TestingService;
 use Vitaliq\Services\ValidationFailed;
@@ -23,12 +25,28 @@ final class PatientController extends Controller
     {
         $userId = $this->userId();
         $testing = $this->app->service(TestingService::class);
+        $platform = $this->app->service(PatientPlatformService::class);
+        $profiles = $platform->profiles($userId);
+        $self = $platform->profile($userId);
+        $now = $this->app->clock->nowSql();
+        $appointments = array_values(array_filter(
+            $this->app->service(AppointmentService::class)->forPatients(array_map(static fn ($p) => (int) $p['id'], $profiles)),
+            static fn ($a) => $a['starts_at'] >= $now && in_array($a['status'], ['scheduled', 'confirmed'], true)
+        ));
+        $passport = $platform->passport((int) $self['id']);
+        $hp = $passport['profile'];
+        $filled = count(array_filter([$hp['blood_group'] !== 'unknown', $hp['height_cm'] !== null, $hp['weight_kg'] !== null,
+            $hp['allergies'] !== null || $hp['conditions'] !== null, $passport['contacts'] !== []]));
         return $this->view('patient/dashboard', [
             'title' => 'Your dashboard',
             'patient' => $this->app->service(PatientService::class)->forUser($userId),
             'active' => $testing->forPatientUser($userId, true),
             'past' => array_slice($testing->forPatientUser($userId, false), 0, 5),
             'notifications' => $this->app->service(NotificationService::class)->latest($userId, 5),
+            'appointments' => array_slice($appointments, 0, 4),
+            'family' => count($profiles) - 1,
+            'passportFilled' => $filled,
+            'passportOf' => 5,
         ], 200, 'app');
     }
 

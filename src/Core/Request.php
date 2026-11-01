@@ -11,6 +11,7 @@ final class Request
      * @param array<string,mixed> $body
      * @param array<string,mixed> $server
      * @param array<string,string> $headers lower-cased header names
+     * @param array<string,array<string,mixed>> $files single-file entries from $_FILES
      */
     public function __construct(
         public readonly string $method,
@@ -19,6 +20,7 @@ final class Request
         public readonly array $body = [],
         public readonly array $server = [],
         public readonly array $headers = [],
+        public readonly array $files = [],
     ) {
     }
 
@@ -49,7 +51,15 @@ final class Request
             $body,
             $_SERVER,
             $headers,
+            array_filter($_FILES, static fn ($f) => is_array($f) && is_string($f['tmp_name'] ?? null)),
         );
+    }
+
+    /** @return array{name?:string,tmp_name?:string,size?:int,error?:int}|null */
+    public function file(string $key): ?array
+    {
+        $f = $this->files[$key] ?? null;
+        return is_array($f) ? $f : null;
     }
 
     public static function normalisePath(string $path): string
