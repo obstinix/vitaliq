@@ -15,6 +15,7 @@
       <option value="admin"<?= selected(old($old, 'role'), 'admin') ?>>Administrator</option>
       <option value="qa"<?= selected(old($old, 'role'), 'qa') ?>>QA analyst</option>
       <option value="phlebotomist"<?= selected(old($old, 'role'), 'phlebotomist') ?>>Phlebotomist</option>
+      <option value="lab"<?= selected(old($old, 'role'), 'lab') ?>>Laboratory staff</option>
     </select>
     <?= field_error($errors, 'role') ?>
   </div>

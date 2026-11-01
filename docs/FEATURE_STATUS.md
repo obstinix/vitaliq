@@ -21,16 +21,16 @@ Statuses: NOT STARTED, IN PROGRESS, IMPLEMENTED, TESTED, PUSHED, BLOCKED. "Tests
 
 | # | Feature | Status | Routes | Tests |
 | --- | --- | --- | --- | --- |
-| 11 | Multi-test orders | NOT STARTED | | |
-| 12 | Inventory | NOT STARTED | | |
-| 13 | Sample lifecycle | NOT STARTED | | |
-| 14 | Barcode scanning | NOT STARTED | | |
-| 15 | Equipment | NOT STARTED | | |
-| 16 | Result validation against reference ranges | NOT STARTED | | |
-| 17 | Verification workflow | NOT STARTED | | |
-| 18 | Rejections | NOT STARTED | | |
-| 19 | Workload | NOT STARTED | | |
-| 20 | Performance analytics | NOT STARTED | | |
+| 11 | Multi-test orders | PUSHED | `/lab/orders`, `/lab/orders/new`, `/lab/orders/{id}` | LaboratoryTest::testOrderCreationThroughTheFormAndAnalytics, testCatalogueLoadsOnceAndBarcodesCarryACheckDigit |
+| 12 | Inventory | PUSHED | `/lab/inventory`, `/lab/inventory/{id}` | LaboratoryTest::testInventoryUsesEarliestExpiryAndNeverExpiredStock |
+| 13 | Sample lifecycle | PUSHED | `/lab/samples`, `/lab/samples/{id}` | LaboratoryTest::testRejectionRecollectionAndNotReportable |
+| 14 | Barcode scanning | PUSHED | `/lab/scan` (scanner, typed or camera), `/lab/samples/{id}/label` | LaboratoryTest::testCatalogueLoadsOnceAndBarcodesCarryACheckDigit, testLabRoutesEnforceRoleAndPermission |
+| 15 | Equipment | PUSHED | `/lab/equipment`, `/lab/equipment/{id}` | LaboratoryTest::testEquipmentCalibrationAndQcFailure |
+| 16 | Result validation against reference ranges | PUSHED | `/lab/catalogue`, `/lab/catalogue/{id}` | LaboratoryTest::testRangeResolutionAndFlags, testRangeEditorValidatesLimits |
+| 17 | Verification workflow | PUSHED | `/lab/verify`, `/lab/items/{id}/verify` | LaboratoryTest::testFullWorkflowWithTwoPersonVerificationAndRelease |
+| 18 | Rejections | PUSHED | sample rejection, send-back, not reportable | LaboratoryTest::testRejectionRecollectionAndNotReportable, testNotReportableItemsSettleTheOrderAndReleaseNeedsAResult |
+| 19 | Workload | PUSHED | `/lab` | LaboratoryTest::testOrderCreationThroughTheFormAndAnalytics |
+| 20 | Performance analytics | PUSHED | `/lab/performance` | LaboratoryTest::testOrderCreationThroughTheFormAndAnalytics |
 
 ## C. Public health
 

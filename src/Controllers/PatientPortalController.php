@@ -9,6 +9,7 @@ use Vitaliq\Core\Response;
 use Vitaliq\Services\AppointmentService;
 use Vitaliq\Services\DocumentVaultService;
 use Vitaliq\Services\HealthIdService;
+use Vitaliq\Services\LaboratoryService;
 use Vitaliq\Services\PatientPlatformService;
 use Vitaliq\Services\PatientService;
 use Vitaliq\Services\TestingService;
@@ -370,6 +371,19 @@ final class PatientPortalController extends Controller
         return $this->screen('patient/timeline', 'Health timeline', $profile, [
             'events' => $this->platform()->timeline((int) $profile['id']),
         ]);
+    }
+
+    /* --------------------------------------------------------- lab results */
+
+    public function labResult(Request $request, string $id): Response
+    {
+        $ids = array_map(static fn ($p) => (int) $p['id'], $this->platform()->profiles($this->userId()));
+        $order = $this->app->service(LaboratoryService::class)->order((int) $id);
+        if ($order === null || $order['status'] !== 'released' || !in_array((int) $order['patient_id'], $ids, true)) {
+            $this->notFound();
+        }
+        $order['items'] = array_values(array_filter($order['items'], static fn ($i) => $i['status'] === 'verified'));
+        return $this->screen('patient/lab-result', 'Lab results ' . $order['order_no'], $this->platform()->profile($this->userId()), ['order' => $order]);
     }
 
     /* ------------------------------------------------------------ feedback */

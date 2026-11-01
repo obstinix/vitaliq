@@ -355,3 +355,20 @@
 .qr-box { max-width: 220px; padding: 8px; background: #fff; border: 1px solid var(--border); border-radius: 8px; }
 .qr-box svg { display: block; width: 100%; height: auto; }
 .qr-box .dark { fill: var(--text); }
+
+/* Server-rendered charts (src/Support/SvgChart.php) */
+.vq-chart { display: block; width: 100%; height: auto; overflow: visible; }
+.vq-chart .gl { stroke: var(--hair); stroke-width: 1; }
+.vq-chart .base { stroke: var(--control); stroke-width: 1; }
+.vq-chart .tick { font: 11px var(--font-ui); fill: var(--faint); font-variant-numeric: tabular-nums; }
+.vq-chart .s1 { fill: var(--accent); }
+.vq-chart .s2 { fill: #b9c6cf; }
+.vq-chart .line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; }
+.vq-chart .dashed { stroke-dasharray: 5 4; }
+.vq-chart .band { fill: var(--accent); fill-opacity: .12; }
+.vq-chart .ref { stroke: var(--negative); stroke-width: 1; stroke-dasharray: 4 3; }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 8px; padding: 0; list-style: none; font-size: var(--fs-small); color: var(--muted); }
+.legend li { display: inline-flex; align-items: center; gap: 6px; margin: 0; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; background: var(--accent); }
+.legend i.band { opacity: .25; } .legend i.grey { background: #b9c6cf; } .legend i.ref { height: 0; border-top: 1px dashed var(--negative); background: none; width: 14px; } .legend i.dash { height: 0; border-top: 2px dashed var(--accent); background: none; width: 14px; }
+.scan-video { display: block; width: 100%; max-height: 320px; background: #0b1622; border-radius: 8px; }

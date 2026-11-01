@@ -1247,3 +1247,10 @@ html.motion-ok [data-hero-title] { opacity: 0; }
 .text-right { text-align: right; }
 .nowrap { white-space: nowrap; }
 .inline-form { display: inline; }
+
+/* Sample label (lab/label, printed at roughly 60 x 30 mm) */
+.sample-label { display: grid; grid-template-columns: 26mm 1fr; gap: 3mm; align-items: center; width: 62mm; margin: var(--s-6) auto; padding: 2mm; border: 1px dashed var(--rule-strong); background: #fff; font-family: var(--font-ui); font-size: 8pt; line-height: 1.25; }
+.sample-label p { margin: 0 0 1mm; }
+.sample-label__qr svg { display: block; width: 100%; height: auto; }
+.sample-label__code { font-family: var(--font-mono); font-size: 10pt; font-weight: 600; letter-spacing: .04em; }
+@media print { .sample-label { margin: 0; border: 0; } }

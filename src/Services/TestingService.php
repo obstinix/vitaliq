@@ -367,7 +367,7 @@ final class TestingService
     /** @param array{id:?int,role:string} $actor */
     public function startProcessing(int $requestId, array $actor, ?string $note = null): void
     {
-        $this->requireRole($actor, ['admin']);
+        $this->requireRole($actor, ['admin', 'lab']);
         $this->app->db->transaction(function (Database $db) use ($requestId, $actor, $note): void {
             $request = $this->lock($db, $requestId);
             $this->move($db, $request, 'in_progress', $actor, $note ?: 'Sample received by the laboratory');
@@ -381,7 +381,7 @@ final class TestingService
      */
     public function recordResult(int $requestId, array $input, array $actor): void
     {
-        $this->requireRole($actor, ['admin']);
+        $this->requireRole($actor, ['admin', 'lab']);
         $v = new Validator($input);
         $outcome = $v->choice('outcome', Labels::OUTCOMES, 'Result');
         $ct = $v->rule('ct_value', 'ct_value', false);
@@ -409,7 +409,7 @@ final class TestingService
     /** @param array{id:?int,role:string} $actor */
     public function releaseResult(int $requestId, array $actor): void
     {
-        $this->requireRole($actor, ['admin']);
+        $this->requireRole($actor, ['admin', 'lab']);
         $this->app->db->transaction(function (Database $db) use ($requestId, $actor): void {
             $request = $this->lock($db, $requestId);
             $db->execute(
@@ -423,7 +423,7 @@ final class TestingService
     /** @param array{id:?int,role:string} $actor */
     public function reject(int $requestId, array $actor, string $reason): void
     {
-        $this->requireRole($actor, ['admin']);
+        $this->requireRole($actor, ['admin', 'lab']);
         $reason = trim($reason);
         if (mb_strlen($reason) < 5 || mb_strlen($reason) > 300) {
             throw new ValidationFailed(['reason' => 'Give a reason of 5–300 characters.']);

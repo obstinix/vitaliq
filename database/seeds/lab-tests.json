@@ -1,0 +1,22 @@
+{
+  "_note": "Starting catalogue. Reference intervals are commonly published adult intervals, given only as editable defaults. Each laboratory must verify or replace them for its own analysers, methods and population before reporting patient results.",
+  "tests": [
+    {"code": "HB", "name": "Haemoglobin", "section": "haematology", "specimen": "whole_blood", "result_type": "numeric", "unit": "g/dL", "decimals": 1, "turnaround_hours": 4,
+     "ranges": [{"sex": "female", "low": 12.0, "high": 15.5, "critical_low": 7.0, "critical_high": 20.0}, {"sex": "male", "low": 13.5, "high": 17.5, "critical_low": 7.0, "critical_high": 20.0}]},
+    {"code": "WBC", "name": "White blood cell count", "section": "haematology", "specimen": "whole_blood", "result_type": "numeric", "unit": "×10³/µL", "decimals": 1, "turnaround_hours": 4,
+     "ranges": [{"sex": "any", "low": 4.0, "high": 11.0, "critical_low": 2.0, "critical_high": 30.0}]},
+    {"code": "PLT", "name": "Platelet count", "section": "haematology", "specimen": "whole_blood", "result_type": "numeric", "unit": "×10³/µL", "decimals": 0, "turnaround_hours": 4,
+     "ranges": [{"sex": "any", "low": 150, "high": 450, "critical_low": 50, "critical_high": 1000}]},
+    {"code": "HBA1C", "name": "Haemoglobin A1c", "section": "biochemistry", "specimen": "whole_blood", "result_type": "numeric", "unit": "%", "decimals": 1, "turnaround_hours": 24,
+     "ranges": [{"sex": "any", "low": 4.0, "high": 5.6}]},
+    {"code": "GLUF", "name": "Glucose, fasting", "section": "biochemistry", "specimen": "plasma", "result_type": "numeric", "unit": "mg/dL", "decimals": 0, "turnaround_hours": 6,
+     "ranges": [{"sex": "any", "low": 70, "high": 99, "critical_low": 40, "critical_high": 400}]},
+    {"code": "CREA", "name": "Creatinine", "section": "biochemistry", "specimen": "serum", "result_type": "numeric", "unit": "mg/dL", "decimals": 2, "turnaround_hours": 12,
+     "ranges": [{"sex": "female", "low": 0.59, "high": 1.04, "critical_high": 10.0}, {"sex": "male", "low": 0.74, "high": 1.35, "critical_high": 10.0}]},
+    {"code": "CRP", "name": "C-reactive protein", "section": "biochemistry", "specimen": "serum", "result_type": "numeric", "unit": "mg/L", "decimals": 1, "turnaround_hours": 12,
+     "ranges": [{"sex": "any", "low": null, "high": 10.0}]},
+    {"code": "COVPCR", "name": "SARS-CoV-2 RNA (RT-PCR)", "section": "molecular", "specimen": "swab", "result_type": "qualitative", "options": "Not detected|Detected|Inconclusive", "abnormal_options": "Detected|Inconclusive", "turnaround_hours": 24, "ranges": []},
+    {"code": "COVRAT", "name": "SARS-CoV-2 antigen (rapid)", "section": "serology", "specimen": "swab", "result_type": "qualitative", "options": "Negative|Positive|Invalid", "abnormal_options": "Positive|Invalid", "turnaround_hours": 1, "ranges": []},
+    {"code": "DENNS1", "name": "Dengue NS1 antigen", "section": "serology", "specimen": "serum", "result_type": "qualitative", "options": "Negative|Positive|Equivocal", "abnormal_options": "Positive|Equivocal", "turnaround_hours": 6, "ranges": []}
+  ]
+}

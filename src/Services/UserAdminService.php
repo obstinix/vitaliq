@@ -87,7 +87,7 @@ final class UserAdminService
     public function inviteStaff(array $input): array
     {
         $v = new Validator($input);
-        $role = $v->choice('role', ['admin' => 'Administrator', 'qa' => 'QA analyst', 'phlebotomist' => 'Phlebotomist'], 'Role');
+        $role = $v->choice('role', ['admin' => 'Administrator', 'qa' => 'QA analyst', 'phlebotomist' => 'Phlebotomist', 'lab' => 'Laboratory staff'], 'Role');
         $name = $v->rule('full_name', 'full_name');
         $email = $v->rule('email', 'email');
         $phlebId = null;

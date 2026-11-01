@@ -138,6 +138,7 @@ final class App
         $this->csrf = new Csrf($session);
         $this->auth = new Auth($this);
         $this->requestId = bin2hex(random_bytes(6));
+        unset($this->services[Permissions::class]);
 
         try {
             if (!str_starts_with($request->path, '/api/')) {

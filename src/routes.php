@@ -14,6 +14,7 @@ use Vitaliq\Controllers\Admin\AdminUserController;
 use Vitaliq\Controllers\AuthController;
 use Vitaliq\Controllers\GuestTestController;
 use Vitaliq\Controllers\HealthCardController;
+use Vitaliq\Controllers\LabController;
 use Vitaliq\Controllers\NotificationController;
 use Vitaliq\Controllers\PatientController;
 use Vitaliq\Controllers\PatientPortalController;
@@ -113,6 +114,7 @@ return static function (Router $r): void {
     $r->get('/patient/documents/{id}', [$pp, 'downloadDocument'], $p);
     $r->post('/patient/documents/{id}/delete', [$pp, 'deleteDocument'], $p);
     $r->get('/patient/timeline', [$pp, 'timeline'], $p);
+    $r->get('/patient/lab-results/{id}', [$pp, 'labResult'], $p);
     $r->get('/patient/feedback', [$pp, 'feedback'], $p);
     $r->post('/patient/feedback', [$pp, 'sendFeedback'], $p);
 
@@ -157,6 +159,43 @@ return static function (Router $r): void {
     $r->get('/admin/announcements', [AdminContentController::class, 'index'], ['role:admin']);
     $r->post('/admin/announcements', [AdminContentController::class, 'create'], ['role:admin']);
     $r->post('/admin/announcements/{id}/toggle', [AdminContentController::class, 'toggle'], ['role:admin']);
+
+    // Laboratory (features 11-20)
+    $lc = LabController::class;
+    $lab = static fn (string $perm): array => ['role:lab,admin', 'perm:' . $perm];
+    $r->get('/lab', [$lc, 'overview'], ['role:lab,admin']);
+    $r->get('/lab/samples', [$lc, 'samples'], $lab('lab.samples'));
+    $r->get('/lab/scan', [$lc, 'scanForm'], $lab('lab.samples'));
+    $r->post('/lab/scan', [$lc, 'scan'], $lab('lab.samples'));
+    $r->get('/lab/samples/{id}', [$lc, 'sample'], $lab('lab.samples'));
+    $r->post('/lab/samples/{id}/move', [$lc, 'moveSample'], $lab('lab.samples'));
+    $r->post('/lab/samples/{id}/recollect', [$lc, 'recollect'], $lab('lab.samples'));
+    $r->get('/lab/samples/{id}/label', [$lc, 'label'], $lab('lab.samples'));
+    $r->get('/lab/orders', [$lc, 'orders'], $lab('lab.orders'));
+    $r->get('/lab/orders/new', [$lc, 'newOrder'], $lab('lab.orders'));
+    $r->post('/lab/orders/new', [$lc, 'createOrder'], $lab('lab.orders'));
+    $r->get('/lab/orders/{id}', [$lc, 'order'], $lab('lab.orders'));
+    $r->post('/lab/orders/{id}/release', [$lc, 'release'], $lab('lab.verify'));
+    $r->post('/lab/orders/{id}/cancel', [$lc, 'cancel'], $lab('lab.orders'));
+    $r->post('/lab/items/{id}/result', [$lc, 'enterResult'], $lab('lab.orders'));
+    $r->post('/lab/items/{id}/verify', [$lc, 'verifyItem'], $lab('lab.verify'));
+    $r->post('/lab/items/{id}/return', [$lc, 'returnItem'], $lab('lab.verify'));
+    $r->post('/lab/items/{id}/reject', [$lc, 'rejectItem'], $lab('lab.orders'));
+    $r->get('/lab/verify', [$lc, 'verifyQueue'], $lab('lab.verify'));
+    $r->get('/lab/catalogue', [$lc, 'catalogue'], $lab('lab.orders'));
+    $r->get('/lab/catalogue/{id}', [$lc, 'catalogueTest'], $lab('lab.orders'));
+    $r->post('/lab/catalogue/{id}/ranges', [$lc, 'saveRange'], $lab('lab.verify'));
+    $r->get('/lab/inventory', [$lc, 'inventory'], $lab('lab.inventory'));
+    $r->post('/lab/inventory', [$lc, 'createItem'], $lab('lab.inventory'));
+    $r->post('/lab/inventory/write-off', [$lc, 'writeOff'], $lab('lab.inventory'));
+    $r->get('/lab/inventory/{id}', [$lc, 'item'], $lab('lab.inventory'));
+    $r->post('/lab/inventory/{id}/receive', [$lc, 'receive'], $lab('lab.inventory'));
+    $r->post('/lab/inventory/{id}/use', [$lc, 'consume'], $lab('lab.inventory'));
+    $r->get('/lab/equipment', [$lc, 'equipment'], $lab('lab.equipment'));
+    $r->post('/lab/equipment', [$lc, 'createEquipment'], $lab('lab.equipment'));
+    $r->get('/lab/equipment/{id}', [$lc, 'equipmentItem'], $lab('lab.equipment'));
+    $r->post('/lab/equipment/{id}/log', [$lc, 'logEquipment'], $lab('lab.equipment'));
+    $r->get('/lab/performance', [$lc, 'performance'], $lab('lab.analytics'));
 
     // STQA laboratory
     $r->get('/qa', [QaController::class, 'overview'], ['role:qa,admin']);

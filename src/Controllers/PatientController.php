@@ -7,6 +7,7 @@ namespace Vitaliq\Controllers;
 use Vitaliq\Core\Request;
 use Vitaliq\Core\Response;
 use Vitaliq\Services\AppointmentService;
+use Vitaliq\Services\LaboratoryService;
 use Vitaliq\Services\NotificationService;
 use Vitaliq\Services\PatientPlatformService;
 use Vitaliq\Services\PatientService;
@@ -52,9 +53,11 @@ final class PatientController extends Controller
 
     public function history(Request $request): Response
     {
+        $profiles = $this->app->service(PatientPlatformService::class)->profiles($this->userId());
         return $this->view('patient/history', [
-            'title' => 'Testing history',
+            'title' => 'Tests and results',
             'requests' => $this->app->service(TestingService::class)->forPatientUser($this->userId()),
+            'labOrders' => $this->app->service(LaboratoryService::class)->releasedForPatients(array_map(static fn ($p) => (int) $p['id'], $profiles)),
         ], 200, 'app');
     }
 
