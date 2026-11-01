@@ -150,6 +150,26 @@ final class SvgChart
         return $out . '</svg>';
     }
 
+    /**
+     * An interval bar for a proportion: the 95% interval as a band, the
+     * estimate as a tick, and an optional reference (the overall rate) as a
+     * red hairline. Values are proportions; $max sets the right edge.
+     */
+    public static function ciBar(?float $p, ?float $low, ?float $high, float $max, ?float $reference = null): string
+    {
+        if ($p === null || $low === null || $high === null || $max <= 0) {
+            return '<span class="faint">—</span>';
+        }
+        $x = static fn (float $v): float => max(0.0, min(100.0, $v / $max * 100));
+        $out = '<svg class="ci-svg" viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true">';
+        $out .= '<rect class="track" x="0" y="4" width="100" height="4" rx="2"/>';
+        $out .= sprintf('<rect class="band" x="%.2f" y="3" width="%.2f" height="6" rx="2"/>', $x($low), max(0.8, $x($high) - $x($low)));
+        if ($reference !== null) {
+            $out .= sprintf('<rect class="refline" x="%.2f" y="0" width="0.6" height="12"/>', $x($reference));
+        }
+        return $out . sprintf('<rect class="est" x="%.2f" y="1" width="1.2" height="10"/></svg>', max(0.0, $x($p) - 0.6));
+    }
+
     private static function open(string $title): string
     {
         return sprintf('<svg class="vq-chart" viewBox="0 0 %d %d" role="img" aria-label="%s">', self::W, self::H, e($title));

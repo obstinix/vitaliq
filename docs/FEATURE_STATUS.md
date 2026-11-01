@@ -36,16 +36,16 @@ Statuses: NOT STARTED, IN PROGRESS, IMPLEMENTED, TESTED, PUSHED, BLOCKED. "Tests
 
 | # | Feature | Status | Routes | Tests |
 | --- | --- | --- | --- | --- |
-| 21 | Surveillance | NOT STARTED | | |
-| 22 | Geographic mapping | NOT STARTED | | |
-| 23 | Outbreak threshold alerts | NOT STARTED | | |
-| 24 | Trend estimates with uncertainty | NOT STARTED | | |
-| 25 | Demographics | NOT STARTED | | |
-| 26 | Seasonal analysis | NOT STARTED | | |
-| 27 | Facility comparison | NOT STARTED | | |
-| 28 | CSV/JSON importer | NOT STARTED | | |
-| 29 | PDF/CSV reports | NOT STARTED | | |
-| 30 | Data quality | NOT STARTED | | |
+| 21 | Surveillance | PUSHED | `/surveillance` | SurveillanceTest::testCountsCombineWorkflowLaboratoryAndImports |
+| 22 | Geographic mapping | PUSHED | `/surveillance/map` (state tile map) | SurveillanceTest::testCountsCombineWorkflowLaboratoryAndImports |
+| 23 | Outbreak threshold alerts | PUSHED | `/surveillance/alerts`, `bin/surveillance-check.php` | SurveillanceTest::testOutbreakRulesRaiseOnceAndNeedANoteToClose |
+| 24 | Trend estimates with uncertainty | PUSHED | `/surveillance/trends` | SurveillanceTest::testStatisticsHelpers |
+| 25 | Demographics | PUSHED | `/surveillance/demographics` | SurveillanceTest::testCountsCombineWorkflowLaboratoryAndImports, testScreensExportsAndAccess |
+| 26 | Seasonal analysis | PUSHED | `/surveillance/trends` (monthly table) | SurveillanceTest::testScreensExportsAndAccess |
+| 27 | Facility comparison | PUSHED | `/surveillance/facilities` | SurveillanceTest::testScreensExportsAndAccess |
+| 28 | CSV/JSON importer | PUSHED | `/surveillance/imports` | SurveillanceTest::testImporterValidatesPreviewsCommitsReplacesAndRollsBack, testFilesThatAreNotTabularAreRefused |
+| 29 | PDF/CSV reports | PUSHED | `/surveillance/reports`, `/surveillance/reports/export` | SurveillanceTest::testScreensExportsAndAccess, testPdfEscapesTextAndPaginates |
+| 30 | Data quality | PUSHED | `/surveillance/quality` | SurveillanceTest::testScreensExportsAndAccess |
 
 ## D. Notifications
 

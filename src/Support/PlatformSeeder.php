@@ -28,15 +28,32 @@ final class PlatformSeeder
     {
     }
 
+    /** Runs each part that has not run yet; each part records its own marker. */
     public function run(): void
     {
         $db = $this->app->db;
-        if ($db->value("SELECT value FROM app_settings WHERE name = 'platform_lab_seeded_at'") !== null) {
-            throw new RuntimeException('Platform demo data has already been seeded.');
-        }
         if ($db->value("SELECT value FROM app_settings WHERE name = 'demo_data_seeded_at'") === null) {
             throw new RuntimeException('Run php bin/seed.php first: the platform demo builds on the base demo data.');
         }
+        $parts = ['platform_lab_seeded_at' => 'seedLab', 'platform_surveillance_seeded_at' => 'seedSurveillance'];
+        $ran = 0;
+        foreach ($parts as $marker => $method) {
+            if ($db->value('SELECT value FROM app_settings WHERE name = :n', ['n' => $marker]) !== null) {
+                continue;
+            }
+            $this->{$method}();
+            $db->execute('INSERT INTO app_settings (name, value) VALUES (:n, :v)', ['n' => $marker, 'v' => date('Y-m-d H:i:s')]);
+            $ran++;
+        }
+        $this->app->clock->freeze(new DateTimeImmutable('now'));
+        if ($ran === 0) {
+            throw new RuntimeException('Platform demo data has already been seeded.');
+        }
+    }
+
+    private function seedLab(): void
+    {
+        $db = $this->app->db;
         mt_srand(20261101);
         $clock = $this->app->clock;
         $now = new DateTimeImmutable('now');
@@ -142,7 +159,61 @@ final class PlatformSeeder
             $appointments->book((int) $demo['user_id'], (int) $demo['patient_id'], ['kind' => 'consultation', 'facility_id' => (string) $facilities['BLR-IND'], 'date' => $day(3), 'slot' => '10:20', 'reason' => 'Review of lab results']);
             $appointments->book((int) $demo['user_id'], (int) $demo['patient_id'], ['kind' => 'teleconsultation', 'date' => $day(9), 'slot' => '18:40', 'reason' => 'Follow-up']);
         }
-        $db->execute("INSERT INTO app_settings (name, value) VALUES ('platform_lab_seeded_at', :v)", ['v' => $now->format('Y-m-d H:i:s')]);
+    }
+
+    /**
+     * Two years of synthetic daily returns for five states, loaded through
+     * the real importer (dengue with a monsoon peak, COVID-19 with small
+     * waves), an officer account and three outbreak rules.
+     */
+    private function seedSurveillance(): void
+    {
+        mt_srand(20261102);
+        $officer = $this->staff('officer', 'Dr. Farah Siddiqui', 'farah.siddiqui@vitaliq.example');
+        $now = new DateTimeImmutable('now');
+        $this->app->clock->freeze($now);
+        $states = ['KA' => 1.0, 'KL' => 1.4, 'MH' => 1.2, 'TN' => 0.9, 'DL' => 0.7];
+        $csv = "disease,date,state,tests,positives\n";
+        for ($d = $now->modify('-730 days'); $d < $now; $d = $d->modify('+1 day')) {
+            $doy = (int) $d->format('z');
+            foreach ($states as $code => $scale) {
+                // Dengue: monsoon season peaking in late September, with a recent rise in Kerala.
+                $season = exp(-(($doy - 265) ** 2) / (2 * 35 ** 2));
+                $recent = $code === 'KL' && $d > $now->modify('-12 days') ? 2.2 : 1.0;
+                $tests = (int) round((40 + 60 * $season) * $scale + mt_rand(0, 12));
+                $pos = min($tests, $this->poisson((2 + 22 * $season) * $scale * $recent));
+                $csv .= sprintf("dengue,%s,%s,%d,%d\n", $d->format('Y-m-d'), $code, $tests, $pos);
+                // COVID-19: low background with two small waves.
+                $wave = 1 + 3 * exp(-(($d->getTimestamp() - $now->modify('-400 days')->getTimestamp()) / 86400) ** 2 / (2 * 20 ** 2))
+                          + 2 * exp(-(($d->getTimestamp() - $now->modify('-120 days')->getTimestamp()) / 86400) ** 2 / (2 * 15 ** 2));
+                $ct = (int) round(30 * $scale + mt_rand(0, 10));
+                $csv .= sprintf("covid19,%s,%s,%d,%d\n", $d->format('Y-m-d'), $code, $ct, min($ct, $this->poisson(0.6 * $scale * $wave)));
+            }
+        }
+        $tmp = (string) tempnam(sys_get_temp_dir(), 'vqseed');
+        file_put_contents($tmp, $csv);
+        $imports = $this->app->service(\Vitaliq\Services\SurveillanceImportService::class);
+        $id = $imports->preview(['name' => 'synthetic-returns-2y.csv', 'tmp_name' => $tmp, 'size' => strlen($csv), 'error' => UPLOAD_ERR_OK], 'Synthetic demonstration returns', $officer);
+        $imports->commit($id, $officer);
+        @unlink($tmp);
+        $outbreak = $this->app->service(\Vitaliq\Services\OutbreakService::class);
+        $outbreak->createThreshold(['disease' => 'dengue', 'method' => 'baseline', 'threshold' => '2', 'window_days' => '7'], $officer);
+        $outbreak->createThreshold(['disease' => 'dengue', 'method' => 'positivity', 'threshold' => '25', 'window_days' => '7', 'min_tests' => '100'], $officer);
+        $outbreak->createThreshold(['disease' => 'covid19', 'method' => 'count', 'threshold' => '40', 'window_days' => '7'], $officer);
+        $outbreak->evaluate();
+    }
+
+    /** Knuth's Poisson sampler; fine for the small means used here. */
+    private function poisson(float $lambda): int
+    {
+        $l = exp(-$lambda);
+        $k = 0;
+        $p = 1.0;
+        do {
+            $k++;
+            $p *= mt_rand() / mt_getrandmax();
+        } while ($p > $l && $k < 1000);
+        return $k - 1;
     }
 
     private function staff(string $role, string $name, string $email): int

@@ -21,6 +21,7 @@ use Vitaliq\Controllers\PatientPortalController;
 use Vitaliq\Controllers\PublicController;
 use Vitaliq\Controllers\QaController;
 use Vitaliq\Controllers\StaffController;
+use Vitaliq\Controllers\SurveillanceController;
 use Vitaliq\Core\Router;
 
 /*
@@ -196,6 +197,28 @@ return static function (Router $r): void {
     $r->get('/lab/equipment/{id}', [$lc, 'equipmentItem'], $lab('lab.equipment'));
     $r->post('/lab/equipment/{id}/log', [$lc, 'logEquipment'], $lab('lab.equipment'));
     $r->get('/lab/performance', [$lc, 'performance'], $lab('lab.analytics'));
+
+    // Public-health surveillance (features 21-30)
+    $sc = SurveillanceController::class;
+    $sv = static fn (string $perm): array => ['role:officer,admin', 'perm:' . $perm];
+    $r->get('/surveillance', [$sc, 'overview'], $sv('surveillance.view'));
+    $r->get('/surveillance/map', [$sc, 'map'], $sv('surveillance.view'));
+    $r->get('/surveillance/trends', [$sc, 'trends'], $sv('surveillance.view'));
+    $r->get('/surveillance/demographics', [$sc, 'demographics'], $sv('surveillance.view'));
+    $r->get('/surveillance/facilities', [$sc, 'facilities'], $sv('surveillance.view'));
+    $r->get('/surveillance/quality', [$sc, 'quality'], $sv('surveillance.view'));
+    $r->get('/surveillance/reports', [$sc, 'reports'], $sv('surveillance.view'));
+    $r->get('/surveillance/reports/export', [$sc, 'export'], $sv('surveillance.view'));
+    $r->get('/surveillance/alerts', [$sc, 'alerts'], $sv('surveillance.alerts'));
+    $r->post('/surveillance/alerts/rules', [$sc, 'createRule'], $sv('surveillance.alerts'));
+    $r->post('/surveillance/alerts/rules/{id}/toggle', [$sc, 'toggleRule'], $sv('surveillance.alerts'));
+    $r->post('/surveillance/alerts/check', [$sc, 'runCheck'], $sv('surveillance.alerts'));
+    $r->post('/surveillance/alerts/{id}', [$sc, 'alertStatus'], $sv('surveillance.alerts'));
+    $r->get('/surveillance/imports', [$sc, 'imports'], $sv('surveillance.import'));
+    $r->post('/surveillance/imports', [$sc, 'upload'], $sv('surveillance.import'));
+    $r->get('/surveillance/imports/template.csv', [$sc, 'template'], $sv('surveillance.import'));
+    $r->get('/surveillance/imports/{id}', [$sc, 'import'], $sv('surveillance.import'));
+    $r->post('/surveillance/imports/{id}', [$sc, 'importAction'], $sv('surveillance.import'));
 
     // STQA laboratory
     $r->get('/qa', [QaController::class, 'overview'], ['role:qa,admin']);
