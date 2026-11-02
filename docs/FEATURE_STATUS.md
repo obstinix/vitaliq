@@ -86,13 +86,13 @@ Statuses: NOT STARTED, IN PROGRESS, IMPLEMENTED, TESTED, PUSHED, BLOCKED. "Tests
 
 | # | Feature | Status | Routes | Tests |
 | --- | --- | --- | --- | --- |
-| 51 | AI assistant (configurable provider) | NOT STARTED | | |
-| 52 | Drug interaction reference | NOT STARTED | | |
-| 53 | Teleconsultation | NOT STARTED | | |
-| 54 | Triage questionnaire | NOT STARTED | | |
-| 55 | Alert engine | NOT STARTED | | |
-| 56 | Report verification tokens | NOT STARTED | | |
-| 57 | FHIR resources | NOT STARTED | | |
-| 58 | Offline portal | NOT STARTED | | |
-| 59 | Accessibility mode | NOT STARTED | | |
-| 60 | Public versioned API | NOT STARTED | | |
+| 51 | AI assistant (configurable provider) | PUSHED · live answers BLOCKED (needs AI_PROVIDER=anthropic and an API key) | `/patient/assistant` | AdvancedFeaturesTest::testAssistantScreensEmergenciesAndUsesTheConfiguredProvider, testAssistantProviderFailureAndRefusalAreHandled |
+| 52 | Drug interaction reference | PUSHED · limited reference list; full coverage BLOCKED (needs a licensed interaction database) | `/patient/medicines` | AdvancedFeaturesTest::testMedicineCheckerAndTriageRules |
+| 53 | Teleconsultation | PUSHED | teleconsultation appointments with private Jitsi rooms (`TELECONSULT_BASE_URL`) | PatientPlatformTest::testAppointmentBookingRulesAndCalendar |
+| 54 | Triage questionnaire | PUSHED | `/patient/triage` | AdvancedFeaturesTest::testMedicineCheckerAndTriageRules |
+| 55 | Alert engine | PUSHED | `/admin/alert-rules` | AdvancedFeaturesTest::testAlertRulesFireOnMatchingEventsOnly |
+| 56 | Report verification tokens | PUSHED | `/verify`, `/verify/{code}`, codes on printed reports | AdvancedFeaturesTest::testReportVerificationCodes |
+| 57 | FHIR resources | PUSHED · read-only subset, not certified | `/fhir/r4/metadata`, `Patient`, `Observation`, `DiagnosticReport` | AdvancedFeaturesTest::testApiKeysScopesAndFhirResources |
+| 58 | Offline portal | PUSHED | `/sw.js`, `/manifest.webmanifest`, `/offline` | AdvancedFeaturesTest::testOfflinePortalFilesAndAdminScreens |
+| 59 | Accessibility mode | PUSHED | `/account/preferences` | NotificationChannelsTest::testLanguageAndAccessibilityPreferences |
+| 60 | Public versioned API | PUSHED | `/api/v1/*`, `/admin/api-keys`, `/developers` | AdvancedFeaturesTest::testApiKeysScopesAndFhirResources |

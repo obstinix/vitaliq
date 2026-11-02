@@ -198,6 +198,17 @@ function initBell() {
   });
 }
 
+/* --------------------------------------------------------------- offline */
+// Feature 58: the service worker keeps a few patient pages readable offline.
+// Signing out tells it to forget every stored page.
+function initOffline() {
+  if (!('serviceWorker' in navigator)) return;
+  navigator.serviceWorker.register(appUrl('/sw.js'), { scope: appUrl('/') || '/' }).catch(() => {});
+  $$('form[action$="/logout"]').forEach((form) => form.addEventListener('submit', () => {
+    navigator.serviceWorker.controller?.postMessage('clear-pages');
+  }));
+}
+
 /* ----------------------------------------------------------- validation */
 function loadRules() {
   const el = document.getElementById('vq-rules');
@@ -363,6 +374,7 @@ function initConditional() {
 function initUtilities() {
   $$('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));
   $$('select[data-autosubmit]').forEach((s) => s.addEventListener('change', () => s.form?.requestSubmit()));
+  initOffline();
   const summary = $('[data-error-summary]');
   if (summary) summary.focus();
 }

@@ -1256,3 +1256,6 @@ html.motion-ok [data-hero-title] { opacity: 0; }
 @media print { .sample-label { margin: 0; border: 0; } }
 .lang-switch select { min-height: 2.25rem; padding: 0.25rem 0.5rem; border: 1px solid var(--rule-strong); border-radius: var(--radius); background: #fff; font: inherit; font-size: 0.875rem; }
 .lang-switch { display: inline-flex; align-items: center; gap: var(--s-2); }
+
+.verify-block { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: center; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--rule); }
+.verify-block svg { width: 96px; height: 96px; }

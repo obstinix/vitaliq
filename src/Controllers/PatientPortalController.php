@@ -383,7 +383,7 @@ final class PatientPortalController extends Controller
             $this->notFound();
         }
         $order['items'] = array_values(array_filter($order['items'], static fn ($i) => $i['status'] === 'verified'));
-        return $this->screen('patient/lab-result', 'Lab results ' . $order['order_no'], $this->platform()->profile($this->userId()), ['order' => $order]);
+        return $this->screen('patient/lab-result', 'Lab results ' . $order['order_no'], $this->platform()->profile($this->userId()), ['order' => $order, 'verify' => $this->verification('lab_order', (int) $order['id'])]);
     }
 
     /* ------------------------------------------------------------ feedback */
@@ -411,5 +411,13 @@ final class PatientPortalController extends Controller
         }
         $this->flash('success', 'Thank you. Your feedback was sent to the Vitaliq team.');
         return $this->redirect('/patient/feedback');
+    }
+
+    /** @return array{code:string,qr:string} */
+    private function verification(string $kind, int $id): array
+    {
+        $svc = $this->app->service(\Vitaliq\Services\ReportVerificationService::class);
+        $code = $svc->codeFor($kind, $id);
+        return ['code' => $code, 'qr' => \Vitaliq\Services\HealthIdService::qrSvg($svc->url($code))];
     }
 }

@@ -31,7 +31,7 @@ $counts = array_count_values(array_column($rows, 'status'));
               <td data-label="Time" class="num"><?= e(fmt_date($a['starts_at'], 'H:i')) ?></td>
               <td data-label="Patient"><?= e($a['full_name']) ?><span class="sub"><?= e(format_mobile($a['mobile'])) ?></span></td>
               <td data-label="Type"><?= e(AppointmentService::KINDS[$a['kind']]) ?></td>
-              <td data-label="Where"><?= e($a['facility_name'] ?? 'Online') ?></td>
+              <td data-label="Where"><?php if ($a['kind'] === 'teleconsultation' && $a['meeting_url'] && in_array($a['status'], ['scheduled', 'confirmed'], true)): ?><a href="<?= e($a['meeting_url']) ?>" target="_blank" rel="noopener noreferrer">Join video room</a><?php else: ?><?= e($a['facility_name'] ?? 'Online') ?><?php endif; ?></td>
               <td data-label="Status"><span class="status status--<?= e($a['status']) ?>"><?= e(AppointmentService::STATUSES[$a['status']]) ?></span></td>
               <td data-label="Update">
                 <?php if (in_array($a['status'], ['scheduled', 'confirmed'], true)): ?>

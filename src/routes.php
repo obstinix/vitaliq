@@ -14,6 +14,9 @@ use Vitaliq\Controllers\Admin\AdminReportController;
 use Vitaliq\Controllers\Admin\AdminRequestController;
 use Vitaliq\Controllers\Admin\AdminUserController;
 use Vitaliq\Controllers\AuthController;
+use Vitaliq\Controllers\CareToolsController;
+use Vitaliq\Controllers\OpenApiController;
+use Vitaliq\Controllers\PlatformController;
 use Vitaliq\Controllers\GuestTestController;
 use Vitaliq\Controllers\HealthCardController;
 use Vitaliq\Controllers\LabController;
@@ -49,6 +52,28 @@ return static function (Router $r): void {
     $r->get('/api/statistics', [PublicController::class, 'statisticsJson']);
     $r->post('/locale', [PublicController::class, 'setLocale']);
     $r->get('/api/health', [AdminGovernanceController::class, 'probe']);
+
+    // Report verification, offline portal, developer page (features 56, 58, 60)
+    $r->get('/verify', [PlatformController::class, 'verifyForm']);
+    $r->post('/verify', [PlatformController::class, 'verifyPost']);
+    $r->get('/verify/{code}', [PlatformController::class, 'verify']);
+    $r->get('/sw.js', [PlatformController::class, 'serviceWorker']);
+    $r->get('/manifest.webmanifest', [PlatformController::class, 'manifest']);
+    $r->get('/offline', [PlatformController::class, 'offline']);
+    $r->get('/developers', [PlatformController::class, 'developers']);
+
+    // Public versioned API and FHIR R4 (features 57, 60): bearer API keys, no session
+    $oa = OpenApiController::class;
+    $r->get('/api/v1', [$oa, 'index']);
+    $r->get('/api/v1/surveillance/summary', [$oa, 'surveillance']);
+    $r->get('/api/v1/facilities', [$oa, 'facilities']);
+    $r->get('/api/v1/reports/verify/{code}', [$oa, 'verify']);
+    $r->get('/fhir/r4/metadata', [$oa, 'metadata']);
+    $r->get('/fhir/r4/Patient/{id}', [$oa, 'patient']);
+    $r->get('/fhir/r4/Observation', [$oa, 'observations']);
+    $r->get('/fhir/r4/Observation/{fid}', [$oa, 'observation']);
+    $r->get('/fhir/r4/DiagnosticReport', [$oa, 'reports']);
+    $r->get('/fhir/r4/DiagnosticReport/{fid}', [$oa, 'report']);
 
     // QR health ID emergency card (public, token-gated)
     $r->get('/h/{token}', [HealthCardController::class, 'show']);
@@ -136,6 +161,12 @@ return static function (Router $r): void {
     $r->get('/patient/timeline', [$pp, 'timeline'], $p);
     $r->get('/patient/lab-results/{id}', [$pp, 'labResult'], $p);
     $r->get('/patient/feedback', [$pp, 'feedback'], $p);
+    $r->get('/patient/assistant', [CareToolsController::class, 'assistant'], $p);
+    $r->post('/patient/assistant', [CareToolsController::class, 'ask'], $p);
+    $r->post('/patient/assistant/clear', [CareToolsController::class, 'clearAssistant'], $p);
+    $r->get('/patient/medicines', [CareToolsController::class, 'medicines'], $p);
+    $r->get('/patient/triage', [CareToolsController::class, 'triageForm'], $p);
+    $r->post('/patient/triage', [CareToolsController::class, 'triage'], $p);
     $r->post('/patient/feedback', [$pp, 'sendFeedback'], $p);
 
     // Phlebotomist portal
@@ -195,6 +226,12 @@ return static function (Router $r): void {
     $r->get('/admin/backups', [$g, 'backups'], ['role:admin', 'perm:admin.backups']);
     $r->post('/admin/backups', [$g, 'createBackup'], ['role:admin', 'perm:admin.backups']);
     $r->get('/admin/backups/{id}', [$g, 'downloadBackup'], ['role:admin', 'perm:admin.backups']);
+    $r->get('/admin/alert-rules', [PlatformController::class, 'alertRules'], ['role:admin', 'perm:admin.alerts']);
+    $r->post('/admin/alert-rules', [PlatformController::class, 'createAlertRule'], ['role:admin', 'perm:admin.alerts']);
+    $r->post('/admin/alert-rules/{id}/toggle', [PlatformController::class, 'toggleAlertRule'], ['role:admin', 'perm:admin.alerts']);
+    $r->get('/admin/api-keys', [PlatformController::class, 'apiKeys'], ['role:admin', 'perm:admin.api']);
+    $r->post('/admin/api-keys', [PlatformController::class, 'issueApiKey'], ['role:admin', 'perm:admin.api']);
+    $r->post('/admin/api-keys/{id}/revoke', [PlatformController::class, 'revokeApiKey'], ['role:admin', 'perm:admin.api']);
     $r->get('/admin/retention', [SecurityController::class, 'retention'], ['role:admin', 'perm:admin.retention']);
     $r->post('/admin/retention', [SecurityController::class, 'savePolicies'], ['role:admin', 'perm:admin.retention']);
     $r->post('/admin/retention/purge', [SecurityController::class, 'purge'], ['role:admin', 'perm:admin.retention']);

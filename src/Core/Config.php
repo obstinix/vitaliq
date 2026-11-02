@@ -57,6 +57,12 @@ final class Config
                 'from' => (string) Env::get('WHATSAPP_FROM', ''),
             ],
             'notification_poll_seconds' => max(10, (int) Env::get('NOTIFICATION_POLL_SECONDS', 30)),
+            'ai' => [
+                // Health information assistant (feature 51): none | anthropic
+                'provider' => (string) Env::get('AI_PROVIDER', 'none'),
+                'api_key' => (string) Env::get('AI_API_KEY', ''),
+                'model' => (string) Env::get('AI_MODEL', 'claude-opus-5-5'),
+            ],
             'teleconsult' => [
                 // Jitsi-compatible server; rooms are created on first join.
                 'base_url' => rtrim((string) Env::get('TELECONSULT_BASE_URL', 'https://meet.jit.si'), '/'),

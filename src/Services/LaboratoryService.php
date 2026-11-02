@@ -484,6 +484,8 @@ final class LaboratoryService
             }
             $this->sampleEvent($db, $sampleId, (string) $s['status'], $to, $actor['id'], $note);
             if ($to === 'rejected') {
+                $this->app->service(AlertEngine::class)->raise('lab.sample_rejected', ['reason' => (string) ($extra['rejection_reason'] ?? '')],
+                    'Sample ' . $s['barcode'] . ' rejected: ' . $note . '.', '/lab/samples/' . $sampleId);
                 $by = $db->value('SELECT ordered_by_user_id FROM lab_orders WHERE id = :id', ['id' => $s['order_id']]);
                 if ($by !== null && (int) $by !== $actor['id']) {
                     $this->app->service(NotificationService::class)->notify((int) $by, 'lab_rejection', 'Sample rejected',
@@ -576,7 +578,7 @@ final class LaboratoryService
     public function verifyItem(int $itemId, array $actor): void
     {
         $this->app->db->transaction(function (Database $db) use ($itemId, $actor): void {
-            $item = $db->one('SELECT i.*, t.name FROM lab_order_items i JOIN lab_tests t ON t.id = i.test_id WHERE i.id = :id FOR UPDATE', ['id' => $itemId]);
+            $item = $db->one('SELECT i.*, t.name, t.code FROM lab_order_items i JOIN lab_tests t ON t.id = i.test_id WHERE i.id = :id FOR UPDATE', ['id' => $itemId]);
             if ($item === null || $item['status'] !== 'entered') {
                 throw new WorkflowException('Only an entered result can be verified.');
             }
@@ -586,6 +588,10 @@ final class LaboratoryService
             $db->execute("UPDATE lab_order_items SET status = 'verified', verified_by_user_id = :u, verified_at = :t WHERE id = :id",
                 ['u' => $actor['id'], 't' => $this->app->clock->nowSql(), 'id' => $itemId]);
             $this->app->service(AuditLog::class)->record('lab.result_verified', 'lab_order', (int) $item['order_id'], ['item' => $itemId, 'flag' => (string) $item['flag']], $actor['id']);
+            if ($item['flag'] !== null && $item['flag'] !== 'normal') {
+                $this->app->service(AlertEngine::class)->raise('lab.result_flagged', ['flag' => (string) $item['flag'], 'test' => (string) $item['code']],
+                    $item['name'] . ' verified as ' . strtolower(self::FLAGS[$item['flag']] ?? (string) $item['flag']) . '.', '/lab/orders/' . $item['order_id']);
+            }
             if (in_array($item['flag'], ['critical_low', 'critical_high'], true)) {
                 $order = $db->one('SELECT order_no, ordered_by_user_id FROM lab_orders WHERE id = :id', ['id' => $item['order_id']]);
                 $title = 'Critical result on ' . ($order['order_no'] ?? '');

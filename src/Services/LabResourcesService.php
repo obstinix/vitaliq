@@ -182,7 +182,7 @@ final class LabResourcesService
     private function checkReorder(Database $db, int $itemId): void
     {
         $row = $db->one(
-            'SELECT i.name, i.reorder_level, COALESCE(SUM(l.quantity), 0) AS qty FROM lab_inventory_items i
+            'SELECT i.name, i.sku, i.reorder_level, COALESCE(SUM(l.quantity), 0) AS qty FROM lab_inventory_items i
                LEFT JOIN lab_inventory_lots l ON l.item_id = i.id AND (l.expires_on IS NULL OR l.expires_on >= :t)
               WHERE i.id = :id GROUP BY i.id',
             ['id' => $itemId, 't' => $this->app->clock->now()->format('Y-m-d')]
@@ -190,6 +190,7 @@ final class LabResourcesService
         if ($row !== null && (int) $row['qty'] <= (int) $row['reorder_level']) {
             $this->app->service(NotificationService::class)->notifyRole('lab', 'stock_low', 'Low stock: ' . $row['name'],
                 (int) $row['qty'] . ' left; reorder level is ' . (int) $row['reorder_level'] . '.', '/lab/inventory/' . $itemId);
+            $this->app->service(AlertEngine::class)->raise('lab.stock_low', ['sku' => (string) $row['sku']], $row['name'] . ': ' . (int) $row['qty'] . ' left.', '/lab/inventory/' . $itemId);
         }
     }
 

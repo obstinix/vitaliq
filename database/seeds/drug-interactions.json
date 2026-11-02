@@ -1,0 +1,32 @@
+{
+  "_note": "A small reference list of widely documented interactions, for illustration and education. It is NOT complete: a medicine pair that is not listed may still interact. Severity words follow common formulary usage. Every entry should be checked against a licensed interaction database (for example the national formulary or the product's prescribing information) before clinical use. Coverage is deliberately limited until such a database is licensed.",
+  "aliases": {
+    "acetylsalicylic acid": "aspirin", "ecosprin": "aspirin", "disprin": "aspirin",
+    "paracetamol": "paracetamol", "acetaminophen": "paracetamol",
+    "warfarin sodium": "warfarin",
+    "viagra": "sildenafil", "nitroglycerin": "glyceryl trinitrate", "gtn": "glyceryl trinitrate", "isosorbide mononitrate": "isosorbide", "isosorbide dinitrate": "isosorbide",
+    "ibuprofen": "ibuprofen", "brufen": "ibuprofen", "diclofenac": "diclofenac", "naproxen": "naproxen",
+    "fluoxetine": "fluoxetine", "sertraline": "sertraline", "escitalopram": "escitalopram",
+    "omeprazole": "omeprazole", "levothyroxine sodium": "levothyroxine", "thyroxine": "levothyroxine",
+    "calcium carbonate": "calcium", "co-trimoxazole": "trimethoprim", "septran": "trimethoprim"
+  },
+  "groups": {
+    "nsaid": ["ibuprofen", "diclofenac", "naproxen", "aspirin"],
+    "nitrate": ["glyceryl trinitrate", "isosorbide"],
+    "ssri": ["fluoxetine", "sertraline", "escitalopram"]
+  },
+  "interactions": [
+    {"a": "warfarin", "b": "aspirin", "severity": "major", "effect": "Higher risk of bleeding.", "advice": "Use together only on a doctor's advice, with monitoring."},
+    {"a": "warfarin", "b": "nsaid", "severity": "major", "effect": "Higher risk of bleeding, including stomach bleeding.", "advice": "Ask a doctor or pharmacist before taking a painkiller of this kind."},
+    {"a": "sildenafil", "b": "nitrate", "severity": "contraindicated", "effect": "Can cause a dangerous fall in blood pressure.", "advice": "Do not take together."},
+    {"a": "simvastatin", "b": "clarithromycin", "severity": "contraindicated", "effect": "Raises simvastatin levels, with a risk of severe muscle damage.", "advice": "A doctor normally pauses simvastatin during the antibiotic course."},
+    {"a": "methotrexate", "b": "trimethoprim", "severity": "major", "effect": "Can increase methotrexate toxicity, including effects on blood cells.", "advice": "Avoid unless a specialist advises."},
+    {"a": "ssri", "b": "tramadol", "severity": "major", "effect": "Risk of serotonin syndrome and seizures.", "advice": "Use together only on a doctor's advice."},
+    {"a": "lithium", "b": "nsaid", "severity": "major", "effect": "Can raise lithium levels towards toxicity.", "advice": "Needs a doctor's advice and level monitoring."},
+    {"a": "spironolactone", "b": "potassium chloride", "severity": "major", "effect": "Risk of high blood potassium.", "advice": "Avoid unless a doctor advises, with blood tests."},
+    {"a": "clopidogrel", "b": "omeprazole", "severity": "moderate", "effect": "May reduce the effect of clopidogrel.", "advice": "Ask a doctor whether another stomach medicine suits better."},
+    {"a": "levothyroxine", "b": "calcium", "severity": "moderate", "effect": "Calcium reduces how much levothyroxine is absorbed.", "advice": "Take them at least four hours apart."},
+    {"a": "ciprofloxacin", "b": "calcium", "severity": "moderate", "effect": "Calcium reduces how much ciprofloxacin is absorbed.", "advice": "Take ciprofloxacin two hours before or six hours after calcium."},
+    {"a": "metformin", "b": "alcohol", "severity": "moderate", "effect": "Heavy drinking raises the risk of a rare but serious build-up of lactic acid.", "advice": "Keep alcohol low; ask a doctor if unsure."}
+  ]
+}

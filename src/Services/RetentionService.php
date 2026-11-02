@@ -28,6 +28,7 @@ final class RetentionService
         'retention_sessions_days' => ['Ended or idle sign-in sessions', 90, 7],
         'retention_audit_days' => ['Audit log', 730, 365],
         'retention_imports_days' => ['Discarded or rolled-back import files', 30, 1],
+        'retention_assistant_days' => ['Assistant conversations', 90, 1],
     ];
 
     public function __construct(private readonly App $app)
@@ -85,6 +86,7 @@ final class RetentionService
                 ['c1' => $cut($p['retention_sessions_days']), 'c2' => $cut($p['retention_sessions_days'])]),
             'audit' => $db->execute('DELETE FROM audit_events WHERE created_at < :c', ['c' => $cut($p['retention_audit_days'])]),
             'rate_limits' => $db->execute('DELETE FROM rate_limits WHERE window_ends_at < :c', ['c' => $now->format('Y-m-d H:i:s')]),
+            'assistant' => $db->execute('DELETE FROM assistant_messages WHERE created_at < :c', ['c' => $cut($p['retention_assistant_days'])]),
         ];
         $staged = 0;
         foreach (glob(VQ_ROOT . '/storage/imports/import-*.json') ?: [] as $file) {
@@ -174,7 +176,7 @@ final class RetentionService
             }
             $db->execute('UPDATE patients SET managed_by_user_id = NULL WHERE managed_by_user_id = :u', ['u' => $uid]);
             $db->execute('UPDATE patients SET user_id = NULL, email = NULL WHERE user_id = :u', ['u' => $uid]);
-            foreach (['notification_preferences', 'notifications', 'user_two_factor', 'user_sessions', 'user_permissions', 'user_facilities'] as $t) {
+            foreach (['notification_preferences', 'notifications', 'user_two_factor', 'user_sessions', 'user_permissions', 'user_facilities', 'assistant_messages', 'triage_assessments'] as $t) {
                 $db->execute("DELETE FROM {$t} WHERE user_id = :u", ['u' => $uid]);
             }
             $db->execute('DELETE FROM password_tokens WHERE user_id = :u', ['u' => $uid]);

@@ -133,6 +133,7 @@ final class PatientController extends Controller
             'title' => 'Test report ' . $detail['reference'],
             'request' => $detail,
             'generatedAt' => $this->app->clock->nowSql(),
+            'verify' => $this->verification('test_request', (int) $id),
         ], 200, 'print');
     }
 
@@ -179,5 +180,13 @@ final class PatientController extends Controller
             $errors['form'] = 'We could not find a request made without an account that matches your mobile number, this reference and this date of birth.';
         }
         return $this->view('patient/link', ['title' => 'Link an earlier request', 'errors' => $errors, 'old' => $request->body], 422, 'app');
+    }
+
+    /** @return array{code:string,qr:string} */
+    private function verification(string $kind, int $id): array
+    {
+        $svc = $this->app->service(\Vitaliq\Services\ReportVerificationService::class);
+        $code = $svc->codeFor($kind, $id);
+        return ['code' => $code, 'qr' => \Vitaliq\Services\HealthIdService::qrSvg($svc->url($code))];
     }
 }

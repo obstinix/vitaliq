@@ -398,3 +398,15 @@
 .shift--admin, .shift--reception { background: var(--raised); color: var(--text); }
 .recovery-codes { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 8px; list-style: none; padding: 0; margin: 12px 0; }
 .recovery-codes li { margin: 0; padding: 6px 10px; border: 1px dashed var(--control); border-radius: 6px; }
+
+/* Assistant conversation */
+.chat { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.chat__msg { max-width: 46rem; margin: 0; padding: 10px 14px; border-radius: 10px; background: var(--raised); }
+.chat__msg p { margin: 0 0 6px; }
+.chat__msg--user { justify-self: end; background: var(--accent-wash); color: var(--pill-info-ink); }
+.chat__msg--safety { border-left: 3px solid var(--negative); background: var(--pill-neg-bg); color: var(--pill-neg-ink); }
+.triage-result--emergency { border-color: var(--negative); background: var(--pill-neg-bg); }
+.triage-result--urgent { border-color: #d9a441; background: var(--pill-warn-bg); }
+.api-key { padding: 10px 12px; border: 1px dashed var(--control); border-radius: 6px; overflow-wrap: anywhere; user-select: all; }
+.verify-block { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: center; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border, #e1e6ea); }
+.verify-block svg { width: 96px; height: 96px; }

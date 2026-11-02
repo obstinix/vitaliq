@@ -9,6 +9,7 @@
 <meta name="csrf-token" content="<?= e(csrf_token()) ?>">
 <meta name="app-base" content="<?= e(url('/')) ?>">
 <link rel="icon" href="<?= e(asset('img/favicon.svg')) ?>" type="image/svg+xml">
+<link rel="manifest" href="<?= e(url('/manifest.webmanifest')) ?>">
 <link rel="preload" href="<?= e(url('/assets/fonts/geist-variable.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="<?= e(url('/assets/fonts/junicode-vitaliq-subset.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="<?= e(asset('css/vitaliq.css')) ?>">

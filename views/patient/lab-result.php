@@ -25,5 +25,11 @@ use Vitaliq\Services\LaboratoryService;
       </tbody>
     </table>
   </div>
-  <p class="disclaimer">A result outside the reference range is not a diagnosis. Reference ranges vary between laboratories and people. Discuss these results with your doctor.</p>
+<?php if (!empty($verify)): ?>
+    <div class="verify-block">
+      <?= $verify['qr'] ?>
+      <p class="small mb-0">Verification code <strong class="mono"><?= e($verify['code']) ?></strong><br>Anyone can confirm this report is genuine at <?= e(url('/verify')) ?> or by scanning the code.</p>
+    </div>
+  <?php endif; ?>
+    <p class="disclaimer">A result outside the reference range is not a diagnosis. Reference ranges vary between laboratories and people. Discuss these results with your doctor.</p>
 </section>

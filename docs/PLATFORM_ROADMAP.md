@@ -51,7 +51,7 @@ Granular permissions (feature 39) sit on top of roles. The role remains the defa
 | 5 | Notifications and languages (31–38) | PUSHED |
 | 6 | Administration (39–45) | PUSHED |
 | 7 | Security (46–50) | PUSHED |
-| 8 | Advanced capabilities (51–60) | NOT STARTED |
+| 8 | Advanced capabilities (51–60) | PUSHED |
 | 9 | Stabilisation: full regression, accessibility, performance | NOT STARTED |
 | 10 | Documentation and release | NOT STARTED |
 

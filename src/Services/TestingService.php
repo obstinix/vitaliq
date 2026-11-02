@@ -417,6 +417,10 @@ final class TestingService
                 ['u' => $actor['id'], 't' => $this->app->clock->nowSql(), 'r' => $requestId]
             );
             $this->move($db, $request, 'result_available', $actor, 'Result authorised and released to the patient');
+            if ($db->value('SELECT outcome FROM test_results WHERE request_id = :r', ['r' => $requestId]) === 'positive') {
+                $this->app->service(AlertEngine::class)->raise('covid.positive_released', ['state' => (string) $request['state_code']],
+                    'Positive result released for ' . $request['reference'] . ' (' . $request['state_code'] . ').', '/admin/requests/' . $requestId);
+            }
         });
     }
 

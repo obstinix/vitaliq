@@ -143,6 +143,7 @@ final class OutbreakService
                 foreach (['officer', 'admin'] as $role) {
                     $this->app->service(NotificationService::class)->notifyRole($role, 'outbreak_alert', $title, $body, '/surveillance/alerts');
                 }
+                $this->app->service(AlertEngine::class)->raise('surveillance.alert', ['disease' => (string) $rule['disease'], 'state' => (string) $state], $title . '. ' . $body, '/surveillance/alerts');
             }
         }
         return $raised;

@@ -156,7 +156,7 @@ final class AppointmentService
     {
         $allowed = ['scheduled' => ['confirmed', 'attended', 'missed', 'cancelled'], 'confirmed' => ['attended', 'missed', 'cancelled']];
         $this->app->db->transaction(function ($db) use ($id, $status, $actorId, $allowed): void {
-            $a = $db->one('SELECT a.*, p.user_id, p.managed_by_user_id FROM appointments a JOIN patients p ON p.id = a.patient_id WHERE a.id = :id FOR UPDATE', ['id' => $id]);
+            $a = $db->one('SELECT a.*, p.user_id, p.managed_by_user_id, p.full_name FROM appointments a JOIN patients p ON p.id = a.patient_id WHERE a.id = :id FOR UPDATE', ['id' => $id]);
             if ($a === null) {
                 throw new WorkflowException('Appointment not found.');
             }
@@ -168,6 +168,10 @@ final class AppointmentService
             }
             $db->execute('UPDATE appointments SET status = :s WHERE id = :id', ['s' => $status, 'id' => $id]);
             $this->app->service(AuditLog::class)->record('appointment.' . $status, 'appointment', $id, [], $actorId);
+            if ($status === 'missed') {
+                $this->app->service(AlertEngine::class)->raise('appointment.missed', ['kind' => (string) $a['kind']],
+                    $a['full_name'] . ' missed a ' . strtolower(self::KINDS[$a['kind']]) . ' on ' . (new DateTimeImmutable((string) $a['starts_at']))->format('j M, g:i a') . '.', '/admin/appointments');
+            }
             $owner = $a['user_id'] ?? $a['managed_by_user_id'];
             if ($owner !== null && in_array($status, ['confirmed', 'cancelled'], true)) {
                 $this->app->service(NotificationService::class)->notify((int) $owner, 'appointment', 'Appointment ' . $status,
