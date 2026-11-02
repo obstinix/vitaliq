@@ -8,6 +8,7 @@ use Vitaliq\Controllers\Admin\AdminCareController;
 use Vitaliq\Controllers\Admin\AdminCommentController;
 use Vitaliq\Controllers\Admin\AdminContentController;
 use Vitaliq\Controllers\Admin\AdminDashboardController;
+use Vitaliq\Controllers\Admin\AdminGovernanceController;
 use Vitaliq\Controllers\Admin\AdminPhlebotomistController;
 use Vitaliq\Controllers\Admin\AdminReportController;
 use Vitaliq\Controllers\Admin\AdminRequestController;
@@ -23,6 +24,7 @@ use Vitaliq\Controllers\PublicController;
 use Vitaliq\Controllers\QaController;
 use Vitaliq\Controllers\StaffController;
 use Vitaliq\Controllers\SurveillanceController;
+use Vitaliq\Controllers\WorkspaceController;
 use Vitaliq\Core\Router;
 
 /*
@@ -45,6 +47,7 @@ return static function (Router $r): void {
     $r->post('/community', [PublicController::class, 'postComment']);
     $r->get('/api/statistics', [PublicController::class, 'statisticsJson']);
     $r->post('/locale', [PublicController::class, 'setLocale']);
+    $r->get('/api/health', [AdminGovernanceController::class, 'probe']);
 
     // QR health ID emergency card (public, token-gated)
     $r->get('/h/{token}', [HealthCardController::class, 'show']);
@@ -81,6 +84,7 @@ return static function (Router $r): void {
     $r->post('/notifications/read-all', [NotificationController::class, 'markAllRead'], ['auth']);
     $r->get('/api/notifications', [NotificationController::class, 'poll'], ['auth']);
     $r->get('/api/notifications/stream', [NotificationController::class, 'stream'], ['auth']);
+    $r->get('/search', [WorkspaceController::class, 'search'], ['auth']);
 
     // Patients
     $r->get('/patient', [PatientController::class, 'dashboard'], ['role:patient']);
@@ -128,6 +132,7 @@ return static function (Router $r): void {
     $r->get('/staff', [StaffController::class, 'tasks'], ['role:phlebotomist']);
     $r->get('/staff/tasks/{id}', [StaffController::class, 'task'], ['role:phlebotomist']);
     $r->post('/staff/tasks/{id}/collect', [StaffController::class, 'collect'], ['role:phlebotomist']);
+    $r->get('/staff/schedule', [WorkspaceController::class, 'schedule'], ['role:phlebotomist,lab,officer,qa']);
 
     // Administration
     $r->get('/admin', [AdminDashboardController::class, 'index'], ['role:admin']);
@@ -164,6 +169,25 @@ return static function (Router $r): void {
     $r->post('/admin/users/{id}/toggle', [AdminUserController::class, 'toggle'], ['role:admin']);
     $r->post('/admin/users/{id}/reinvite', [AdminUserController::class, 'reinvite'], ['role:admin']);
     $r->get('/admin/audit', [AdminUserController::class, 'audit'], ['role:admin']);
+    $g = AdminGovernanceController::class;
+    $r->get('/admin/audit/analytics', [$g, 'auditAnalytics'], ['role:admin']);
+    $r->get('/admin/roles', [$g, 'roles'], ['role:admin', 'perm:admin.rbac']);
+    $r->post('/admin/roles', [$g, 'saveRoles'], ['role:admin', 'perm:admin.rbac']);
+    $r->get('/admin/users/{id}/permissions', [$g, 'userPermissions'], ['role:admin', 'perm:admin.rbac']);
+    $r->post('/admin/users/{id}/permissions', [$g, 'saveUserPermissions'], ['role:admin', 'perm:admin.rbac']);
+    $r->get('/admin/facilities', [$g, 'facilities'], ['role:admin', 'perm:admin.facilities']);
+    $r->post('/admin/facilities', [$g, 'createFacility'], ['role:admin', 'perm:admin.facilities']);
+    $r->get('/admin/facilities/{id}', [$g, 'facility'], ['role:admin', 'perm:admin.facilities']);
+    $r->post('/admin/facilities/{id}', [$g, 'updateFacility'], ['role:admin', 'perm:admin.facilities']);
+    $r->post('/admin/facilities/{id}/toggle', [$g, 'toggleFacility'], ['role:admin', 'perm:admin.facilities']);
+    $r->post('/admin/facilities/{id}/staff', [$g, 'facilityStaff'], ['role:admin', 'perm:admin.facilities']);
+    $r->get('/admin/system', [$g, 'system'], ['role:admin', 'perm:admin.system']);
+    $r->get('/admin/backups', [$g, 'backups'], ['role:admin', 'perm:admin.backups']);
+    $r->post('/admin/backups', [$g, 'createBackup'], ['role:admin', 'perm:admin.backups']);
+    $r->get('/admin/backups/{id}', [$g, 'downloadBackup'], ['role:admin', 'perm:admin.backups']);
+    $r->get('/admin/schedule', [WorkspaceController::class, 'schedule'], ['role:admin', 'perm:admin.schedule']);
+    $r->post('/admin/schedule', [WorkspaceController::class, 'addShift'], ['role:admin', 'perm:admin.schedule']);
+    $r->post('/admin/schedule/{id}/remove', [WorkspaceController::class, 'removeShift'], ['role:admin', 'perm:admin.schedule']);
     $r->get('/admin/announcements', [AdminContentController::class, 'index'], ['role:admin']);
     $r->post('/admin/announcements', [AdminContentController::class, 'create'], ['role:admin']);
     $r->post('/admin/announcements/{id}/toggle', [AdminContentController::class, 'toggle'], ['role:admin']);

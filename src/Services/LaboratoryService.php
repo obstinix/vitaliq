@@ -253,7 +253,7 @@ final class LaboratoryService
     public function createOrder(array $input, array $actor): int
     {
         $v = new Validator($input);
-        $priority = $v->choice('priority', self::PRIORITIES, 'Priority') ?? 'routine';
+        $priority = $v->choice('priority', self::PRIORITIES, 'Priority', false) ?? 'routine';
         $notes = $v->text('clinical_notes', 'Clinical notes', 500, false);
         $patientId = (int) ($input['patient_id'] ?? 0);
         $patient = $patientId > 0 ? $this->app->db->one('SELECT id, sex, date_of_birth FROM patients WHERE id = :id', ['id' => $patientId]) : null;
@@ -287,9 +287,10 @@ final class LaboratoryService
             $seq = (int) $db->value("SELECT COUNT(*) FROM lab_orders WHERE order_no LIKE :p FOR UPDATE", ['p' => $prefix . '%']) + 1;
             $orderNo = $prefix . str_pad((string) $seq, 4, '0', STR_PAD_LEFT);
             $orderId = $db->insert(
-                'INSERT INTO lab_orders (order_no, patient_id, request_id, ordered_by_user_id, priority, clinical_notes, created_at)
-                 VALUES (:n, :p, :r, :u, :pr, :c, :t)',
-                ['n' => $orderNo, 'p' => $patientId, 'r' => $requestId > 0 ? $requestId : null, 'u' => $actor['id'], 'pr' => $priority,
+                'INSERT INTO lab_orders (order_no, patient_id, request_id, facility_id, ordered_by_user_id, priority, clinical_notes, created_at)
+                 VALUES (:n, :p, :r, :f, :u, :pr, :c, :t)',
+                ['n' => $orderNo, 'p' => $patientId, 'r' => $requestId > 0 ? $requestId : null,
+                 'f' => $this->app->service(GovernanceService::class)->homeFacility($actor['id']), 'u' => $actor['id'], 'pr' => $priority,
                  'c' => $notes ?: null, 't' => $now->format('Y-m-d H:i:s')]
             );
             $samples = [];

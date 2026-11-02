@@ -34,8 +34,22 @@ abstract class Controller
             'currentPath' => $this->app->request()->path,
             'pollSeconds' => (int) $this->app->config['notification_poll_seconds'],
             'clientRules' => Rules::forClient(),
+            'scopeLabel' => $user !== null && $user['role'] !== 'patient' ? $this->facilityLabel((int) $user['id']) : null,
         ];
         return Response::html($this->app->view->render($template, $data, $layout), $status);
+    }
+
+    private function facilityLabel(int $userId): ?string
+    {
+        $names = array_column($this->app->db->all(
+            'SELECT f.name FROM user_facilities uf JOIN facilities f ON f.id = uf.facility_id WHERE uf.user_id = :u ORDER BY f.name LIMIT 3',
+            ['u' => $userId]
+        ), 'name');
+        return match (count($names)) {
+            0 => null,
+            1 => (string) $names[0],
+            default => count($names) . ' facilities',
+        };
     }
 
     protected function redirect(string $path): Response

@@ -69,7 +69,16 @@ final class RouterAndWorkflowRulesTest extends TestCase
                 $this->assertContains('role:patient', $route['middleware'], $p);
             }
             if (str_starts_with($p, '/staff')) {
-                $this->assertContains('role:phlebotomist', $route['middleware'], $p);
+                $roles = array_values(array_filter($route['middleware'], static fn ($m) => str_starts_with($m, 'role:')));
+                $this->assertCount(1, $roles, $p);
+                $this->assertContains('phlebotomist', explode(',', substr($roles[0], 5)), $p);
+                $this->assertNotContains('patient', explode(',', substr($roles[0], 5)), $p);
+            }
+            if (str_starts_with($p, '/lab')) {
+                $this->assertContains('role:lab,admin', $route['middleware'], $p);
+            }
+            if (str_starts_with($p, '/surveillance')) {
+                $this->assertContains('role:officer,admin', $route['middleware'], $p);
             }
         }
     }

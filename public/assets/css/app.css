@@ -389,3 +389,10 @@
 .ci-svg { display: block; width: 100%; min-width: 120px; height: 12px; }
 .ci-svg .track { fill: var(--hair); } .ci-svg .band { fill: var(--accent); fill-opacity: .3; } .ci-svg .est { fill: var(--accent); } .ci-svg .refline { fill: var(--negative); }
 .peak { color: var(--accent); }
+/* Staff rota (week view) */
+.rota th[scope="row"] { min-width: 10rem; white-space: nowrap; }
+.rota td, .rota thead th { min-width: 7.5rem; vertical-align: top; }
+.rota .today { box-shadow: inset 0 2px 0 var(--accent); }
+.shift { margin-bottom: 6px; padding: 4px 8px; border-radius: 4px; background: var(--accent-wash); color: var(--pill-info-ink); font-size: var(--fs-small); }
+.shift--on_call { background: none; border: 1px dashed var(--control); color: var(--text); }
+.shift--admin, .shift--reception { background: var(--raised); color: var(--text); }

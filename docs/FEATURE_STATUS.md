@@ -64,13 +64,13 @@ Statuses: NOT STARTED, IN PROGRESS, IMPLEMENTED, TESTED, PUSHED, BLOCKED. "Tests
 
 | # | Feature | Status | Routes | Tests |
 | --- | --- | --- | --- | --- |
-| 39 | Granular RBAC | NOT STARTED | | |
-| 40 | Multi-facility | NOT STARTED | | |
-| 41 | Audit analytics | NOT STARTED | | |
-| 42 | Staff scheduling | NOT STARTED | | |
-| 43 | Backups | NOT STARTED | | |
-| 44 | Health monitoring | NOT STARTED | | |
-| 45 | Search | NOT STARTED | | |
+| 39 | Granular RBAC | PUSHED | `/admin/roles`, `/admin/users/{id}/permissions`, `perm:` middleware | AdministrationTest::testRoleMatrixAndUserOverridesChangeAccess, NavigationAndPermissionsTest |
+| 40 | Multi-facility | PUSHED | `/admin/facilities`, `/admin/facilities/{id}` | AdministrationTest::testFacilitiesStaffAndLabOrdersFollowTheHomeFacility |
+| 41 | Audit analytics | PUSHED | `/admin/audit/analytics` | AdministrationTest::testSystemHealthSearchAndAuditAnalytics |
+| 42 | Staff scheduling | PUSHED | `/admin/schedule`, `/staff/schedule` | AdministrationTest::testShiftsRefuseOverlapsAndSpanMidnight |
+| 43 | Backups | PUSHED | `/admin/backups`, `bin/backup.php`, `bin/backup-restore.php` | AdministrationTest::testBackupsAreEncryptedVerifiedAndRestorable |
+| 44 | Health monitoring | PUSHED | `/admin/system`, public `/api/health` | AdministrationTest::testSystemHealthSearchAndAuditAnalytics |
+| 45 | Search | PUSHED | `/search` | AdministrationTest::testSystemHealthSearchAndAuditAnalytics |
 
 ## F. Security
 
