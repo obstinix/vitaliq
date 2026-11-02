@@ -25,3 +25,10 @@ All work was done on 10 Oct 2026 (IST).
 
 - The demo account passwords were generated at seed time and kept in a private file outside the repository. They are not in Git or the documentation.
 - The personal access token supplied in the request was **not used**. Git Credential Manager already held a working credential for the same account.
+
+## 1–2 Nov 2026: platform transformation
+
+- **Milestone 0.** Backed up the repository and database outside the repo. Audited the code, chose the framed-sheet app style with the brand palette, and wrote the roadmap.
+- **Milestones 1–8.** Built the design system and role-aware shell, then features 1–60 in seven milestones. Each milestone was committed after the full suite and PHPStan passed, then pushed to `main`.
+- **Milestone 9.** Fixed phone-width overflow (DEF-016). Ran the design lint and checked the service worker in Chrome.
+- **Milestone 10.** Updated the documentation. Integrations that need credentials are marked in `docs/FEATURE_STATUS.md`.

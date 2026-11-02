@@ -19,6 +19,11 @@ Defects found while building and testing Vitaliq on 10 Oct 2026. Every entry was
 | DEF-013 | Anonymous test requests had no rate limit (queue spam) | Security | Medium | Security audit, 23 Oct 2026 | Resolved |
 | DEF-014 | Runtime PHP 8.4.25 vulnerable to CVE-2026-109618/109619 | Runtime | Critical | Security audit, 23 Oct 2026 | Resolved (local runtime upgraded; deployments must use a fixed release) |
 
+| DEF-015 | Lab order rejected when no priority was sent | Laboratory | Minor | `AdministrationTest`, 2 Nov 2026 | Resolved: priority defaults to routine |
+| DEF-016 | Wide tables and screen-reader labels widened phone pages (up to 702 px) | Interface | Major | Browser measurement at 375 px, 2 Nov 2026 | Resolved: panels contain and scroll their tables |
+| DEF-017 | Trend chart's 7-day average dipped on the last day | Surveillance | Minor | Visual review, 1 Nov 2026 | Resolved: series and fit end yesterday, because today is still filling |
+| DEF-018 | Migration 0007 failed on MariaDB: CHECK on a column with an ON DELETE SET NULL foreign key | Database | Major | First migration run, 1 Nov 2026 | Resolved: the two-person rule is enforced in `LaboratoryService::verifyItem()`; the partly created empty tables were dropped before re-running |
+
 There are no open product defects.
 
 ## Details

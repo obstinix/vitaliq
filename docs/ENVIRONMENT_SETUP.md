@@ -138,5 +138,9 @@ php bin/qa.php run
 
 ## Outstanding external prerequisites
 
-- An SMTP or SMS provider, if real message delivery is wanted. No transport is implemented.
-- HTTPS and a production web server for any deployment. Session cookies become `Secure` automatically over HTTPS.
+- **Email, SMS and WhatsApp.** These need SMTP and Twilio credentials for live delivery. The transports are implemented; see [PLATFORM_GUIDE.md](PLATFORM_GUIDE.md).
+- **Assistant.** It needs an Anthropic API key (`AI_PROVIDER=anthropic`).
+- **Medicine interactions.** Real coverage needs a licensed interaction database.
+- **Scheduled jobs.** A scheduler (cron or Windows Task Scheduler) must run the jobs listed in [PLATFORM_GUIDE.md](PLATFORM_GUIDE.md#scheduled-jobs).
+- **Deployment.** Any deployment needs HTTPS and a production web server. Session cookies become `Secure` automatically over HTTPS. Service workers need HTTPS or `localhost`.
+- **Extensions.** `sodium`, `fileinfo` and `zlib` are required; `curl` is required for outside providers.

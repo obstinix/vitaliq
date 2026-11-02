@@ -60,6 +60,21 @@ qa_test_cases *─0..1 defects;  qa_runs 1─* qa_run_results *─0..1 qa_test_c
 | `qa_runs`, `qa_run_results` | Executions | Real timestamps, environment and per-case actual result |
 | `states`, `app_settings`, `schema_migrations` | Reference and bookkeeping data | |
 
+### Platform tables (migrations 0005-0012)
+
+All of these were added by new migrations. No existing table was dropped, and existing columns kept their meaning. ENUM columns were only extended (users.role gained `lab` and `officer`).
+
+| Migration | Tables | Notes |
+| --- | --- | --- |
+| 0005 | `role_permissions`, `user_permissions`, `facilities`, `user_facilities`; `test_requests.facility_id`; `users.locale`, `users.accessibility_mode` | Permission overrides on top of role defaults |
+| 0006 | `health_profiles`, `immunisations`, `appointments`, `health_id_tokens`, `patient_documents`, `emergency_contacts`, `patient_feedback`; `patients.managed_by_user_id`, `patients.relationship` | Family profiles are patient rows managed by an account holder. Health ID tokens are stored as SHA-256 hashes. Vault files are encrypted on disk. |
+| 0007 | `lab_tests`, `lab_reference_ranges`, `lab_orders`, `lab_samples`, `lab_sample_events`, `lab_order_items`, `lab_inventory_items`, `lab_inventory_lots`, `lab_inventory_movements`, `lab_equipment`, `lab_equipment_logs` | Unique 12-digit barcodes; one item per test per order; two-person verification enforced in the service |
+| 0008 | `surveillance_imports`, `surveillance_records`, `surveillance_thresholds`, `outbreak_alerts` | `CHECK (positives <= tests)`; one record per disease/day/state/facility/sex/age band; one alert per rule/state/window |
+| 0009 | `notification_preferences`, `notification_deliveries`, `broadcasts` | Delivery status includes `simulated` for local drivers |
+| 0010 | `staff_shifts`, `backups` | `CHECK (ends_at > starts_at)`; backups register the SHA-256 of each encrypted file |
+| 0011 | `user_two_factor`, `user_sessions`, `deletion_requests` | Encrypted TOTP secrets; hashed recovery codes and session keys |
+| 0012 | `assistant_messages`, `triage_assessments`, `alert_rules`, `alert_rule_hits`, `report_verifications`, `api_keys` | Verification codes and API keys stored only as hashes |
+
 ## Deliberate redundancy
 
 `users.full_name`/`mobile` and `patients.full_name`/`mobile` overlap for account holders. `users` is the sign-in identity used by every role; `patients` is the clinical record, which also exists for guests without accounts. `PatientService::updateProfile()` updates both in one transaction.
@@ -78,5 +93,15 @@ qa_test_cases *─0..1 defects;  qa_runs 1─* qa_run_results *─0..1 qa_test_c
 - about 150 requests spread over 45 days at realistic stages;
 - results, notifications and announcements (3 real WHO milestones with sources, and 2 labelled demo notices);
 - 10 labelled demo comments, the defect register (`database/seeds/defects.json`) and the QA catalogue.
+
+`bin/seed-platform.php` then adds, through the same services:
+
+- 4 facilities, 2 laboratory staff and 1 public-health officer;
+- the test catalogue, stock and equipment;
+- 18 lab orders at different stages;
+- 2 appointments;
+- two years of synthetic daily surveillance returns for 5 states, imported through the real importer, with 3 outbreak rules.
+
+Each part records its own marker, so it runs once.
 
 Demo mobile numbers all start with `9000`. Emails use reserved `example.com`/`vitaliq.example` domains. Demo passwords are random for each install and printed once. The seeder refuses to run in production or twice.

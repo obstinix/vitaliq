@@ -1,5 +1,24 @@
 # Test execution report
 
+## Platform transformation (1–2 Nov 2026)
+
+Environment: Windows 11 x64 · PHP 8.4.27 · MariaDB 11.4.13 · Node 22.23.1 · PHPUnit 12.5.38 · PHPStan 2 (level 6).
+
+| Suite | Result |
+| --- | --- |
+| PHPUnit, full suite | **331 tests, 1746 assertions, all passing** (275 before the transformation) |
+| PHPStan level 6 | No errors |
+| Node rule consistency | 3 of 3 passing |
+| New functional test classes | `NavigationAndPermissionsTest` (5), `PatientPlatformTest` (8), `LaboratoryTest` (10), `SurveillanceTest` (7), `NotificationChannelsTest` (7), `AdministrationTest` (5), `SecurityFeaturesTest` (7), `AdvancedFeaturesTest` (7) |
+| Design lint (`design-taste-frontend` `lint.mjs --app`) | 0 failures, 7 warnings, all reviewed. One `.eyebrow` rule exists only to hide legacy labels. Shadows are on popovers and focus rings only. Monospace is for IDs and barcodes. |
+| Phone layout (375 px) | 40+ patient, lab, surveillance, admin and account screens measured: no page wider than the viewport, after the fix recorded as DEF-016 |
+| Service worker | Registers and activates in Chrome (`vq-assets-*` cache created); the desktop app's built-in browser pane does not support service workers |
+| External providers | SMTP, Twilio and the Anthropic provider are tested against fakes (`HttpClient::fake`, a stub `AssistantProvider`). No live delivery was performed: no credentials were available. |
+
+Defects found during the transformation are DEF-015 to DEF-018 in [BUG_REPORT.md](BUG_REPORT.md).
+
+## Original STQA release (10 Oct 2026)
+
 - **Execution date:** 10 Oct 2026. The final recorded run started at 17:39 IST.
 - **Environment:** Windows 11 x64 · PHP 8.4.25 · MariaDB 11.4.13 · Node 22.23.1 · PHPUnit 12.5.38 · PHP built-in server.
 

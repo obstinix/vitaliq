@@ -84,6 +84,23 @@ Full details: [SECURITY_AUDIT_2026-10-23.md](SECURITY_AUDIT_2026-10-23.md).
 | Least-privilege database user | App user has rights on `vitaliq` and `vitaliq_test` only, without GRANT or SUPER | Verified when the user was created (see ENVIRONMENT_SETUP.md) |
 | File uploads | None implemented, so there is no upload surface | Not applicable |
 
+## Platform additions (Nov 2026)
+
+| Control | Where | Verified by |
+| --- | --- | --- |
+| Granular permissions on routes (`perm:` middleware) and navigation | `src/Auth/Permissions.php`, `src/Core/App.php` | `NavigationAndPermissionsTest`, `AdministrationTest`, `LaboratoryTest::testLabRoutesEnforceRoleAndPermission` |
+| TOTP two-step sign-in (RFC 6238); no replay of a used step; hashed single-use recovery codes; 5 tries per password | `src/Auth/Totp.php`, `AccountSecurityService` | `SecurityFeaturesTest` (RFC vectors included) |
+| Session register with remote sign-out, effective on the next request | `user_sessions`, `Auth::user()` | `SecurityFeaturesTest::testSessionsCanBeEndedRemotelyAndNewDevicesRaiseAnAlert` |
+| Encryption at rest (XSalsa20-Poly1305, HKDF purpose keys) for vault files, TOTP secrets and backups; integrity checks | `src/Support/Crypto.php` | `SecurityFeaturesTest`, `PatientPlatformTest`, `AdministrationTest` |
+| Uploads checked by content type and size; random storage names; download responses sandboxed with `nosniff` | `DocumentVaultService`, `Response::download()` | `PatientPlatformTest::testDocumentVaultEncryptsAndScopesFiles` |
+| Hashed bearer tokens: QR health IDs, report codes, API keys (scoped, expiring, revocable, rate-limited) | `HealthIdService`, `ReportVerificationService`, `ApiKeyService` | `PatientPlatformTest`, `AdvancedFeaturesTest` |
+| Public token pages are rate-limited, `noindex` and `no-referrer` | `HealthCardController`, `PlatformController::verify()` | `PatientPlatformTest`, `AdvancedFeaturesTest` |
+| Camera allowed only on `/lab/scan`; no change to the CSP | `LabController::scanForm()` | `LaboratoryTest` |
+| Outside providers over HTTPS only, certificates verified, credentials only from `.env` | `src/Messaging` | `NotificationChannelsTest` |
+| Formula-safe CSV exports; every surveillance export and FHIR read audited | `SurveillanceController`, `OpenApiController` | `SurveillanceTest`, `AdvancedFeaturesTest` |
+| Backups restore only into an empty database, from the CLI | `bin/backup-restore.php` | Code review; tamper detection in `AdministrationTest` |
+| Retention and account deletion, keeping clinical records | `RetentionService` | `SecurityFeaturesTest` |
+
 ## Not verified, or out of scope
 
 - Behaviour under real HTTPS (Secure cookies, HSTS): no TLS in the local environment.

@@ -41,3 +41,15 @@ The public guidance pages are original summaries written for Vitaliq, paraphrasi
 - The favicon (`img/favicon.svg`) and the wordmark mark are original.
 - The screenshots in `docs/screenshots` were taken of this application with synthetic demo data.
 - No stock photography or illustration is used.
+
+## Platform additions (Nov 2026)
+
+| Item | Source | Licence | Use |
+| --- | --- | --- | --- |
+| chillerlan/php-qrcode 5 | Composer (`chillerlan/php-qrcode`) | MIT | QR codes for health IDs, sample labels, TOTP set-up and report verification |
+| anthropic-ai/sdk | Composer (`anthropic-ai/sdk`) | MIT | Optional assistant provider |
+| App design | The "framed sheet" app style from the design-taste-frontend skill, with Vitaliq's own palette and Geist | Design guidance only; no files copied | `public/assets/css/app.css` |
+| Navigation icons | Hand-written outline SVG paths in `src/Support/Navigation.php` | Original | Sidebar |
+| Lab reference intervals | Commonly published adult intervals, as editable defaults | Factual | `database/seeds/lab-tests.json`; each laboratory must verify them |
+| Medicine interactions | A small set of widely documented interactions, written for Vitaliq | Original wording | `database/seeds/drug-interactions.json`; not a substitute for a licensed database |
+| LOINC codes | LOINC (Regenstrief Institute), codes only | LOINC licence (free use of codes) | FHIR Observation coding |
