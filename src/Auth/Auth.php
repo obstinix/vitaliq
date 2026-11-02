@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Vitaliq\Auth;
 
 use Vitaliq\Core\App;
+use Vitaliq\Services\AccountSecurityService;
 use Vitaliq\Services\AuditLog;
 
 /**
@@ -44,6 +45,12 @@ final class Auth
         );
         if ($row === null || (int) $row['is_active'] !== 1
             || (int) $row['session_version'] !== (int) $session->get('session_version')) {
+            $session->invalidate();
+            return null;
+        }
+        // A session ended from the security page (or another device) stops here.
+        $key = $session->get('sk');
+        if (is_string($key) && !$this->app->service(AccountSecurityService::class)->touch((int) $row['id'], $key)) {
             $session->invalidate();
             return null;
         }
@@ -103,8 +110,10 @@ final class Auth
 
     /**
      * Verify credentials. Error messages never reveal whether the email exists.
+     * When the account has two-step sign-in, the password only opens the code
+     * step: 'mfa' is true and nobody is signed in yet.
      *
-     * @return array{ok:bool,error:?string}
+     * @return array{ok:bool,error:?string,mfa?:bool}
      */
     public function attempt(string $email, string $password): array
     {
@@ -131,6 +140,9 @@ final class Auth
         if ($user === null || !$valid || (int) $user['is_active'] !== 1 || $user['password_hash'] === null) {
             $limiter->hit($accountBucket, self::LOGIN_MAX_PER_ACCOUNT, self::LOGIN_WINDOW_SECONDS);
             $this->app->service(AuditLog::class)->record('auth.login_failed', 'user', $user !== null ? (int) $user['id'] : null, [], null);
+            if ($user !== null) {
+                $this->app->service(AccountSecurityService::class)->failedLogin((int) $user['id'], $limiter->hits($accountBucket));
+            }
             return ['ok' => false, 'error' => 'The email or password is incorrect, or the account is inactive.'];
         }
 
@@ -141,7 +153,48 @@ final class Auth
             ]);
         }
         $limiter->clear($accountBucket);
+        if ($this->app->service(AccountSecurityService::class)->twoFactorEnabled((int) $user['id'])) {
+            $session = $this->app->session();
+            $session->regenerate();
+            $session->set('mfa_pending', ['uid' => (int) $user['id'], 'ver' => (int) $user['session_version'], 'at' => $this->app->clock->now()->getTimestamp()]);
+            return ['ok' => true, 'error' => null, 'mfa' => true];
+        }
         $this->login((int) $user['id'], (int) $user['session_version']);
+        return ['ok' => true, 'error' => null];
+    }
+
+    /** True while a password has been accepted and the second step is waiting (5 minutes). */
+    public function mfaPending(): bool
+    {
+        $p = $this->app->session()->get('mfa_pending');
+        return is_array($p) && ($p['at'] ?? 0) >= $this->app->clock->now()->getTimestamp() - 300;
+    }
+
+    /**
+     * Second step of sign-in. Five tries per password, then start again.
+     *
+     * @return array{ok:bool,error:?string}
+     */
+    public function completeMfa(string $code): array
+    {
+        $session = $this->app->session();
+        $p = $session->get('mfa_pending');
+        if (!$this->mfaPending() || !is_array($p)) {
+            $session->remove('mfa_pending');
+            return ['ok' => false, 'error' => 'The sign-in timed out. Enter your email and password again.'];
+        }
+        $uid = (int) $p['uid'];
+        if (!$this->app->rateLimiter()->hit('mfa:' . $uid, 5, 900)) {
+            $session->remove('mfa_pending');
+            return ['ok' => false, 'error' => 'Too many wrong codes. Please wait 15 minutes and sign in again.'];
+        }
+        if (!$this->app->service(AccountSecurityService::class)->verifyLogin($uid, $code)) {
+            $this->app->service(AuditLog::class)->record('auth.mfa_failed', 'user', $uid, [], null);
+            return ['ok' => false, 'error' => 'That code is not right. Use the newest code from your app, or a recovery code.'];
+        }
+        $session->remove('mfa_pending');
+        $this->app->rateLimiter()->clear('mfa:' . $uid);
+        $this->login($uid, (int) $p['ver']);
         return ['ok' => true, 'error' => null];
     }
 
@@ -152,6 +205,7 @@ final class Auth
         $session->set('user_id', $userId);
         $session->set('session_version', $sessionVersion);
         $session->set('last_activity', $this->app->clock->now()->getTimestamp());
+        $session->set('sk', $this->app->service(AccountSecurityService::class)->startSession($userId));
         $this->app->csrf()->rotate();
         $this->app->db->execute('UPDATE users SET last_login_at = :t WHERE id = :id', [
             't' => $this->app->clock->nowSql(),
@@ -166,6 +220,10 @@ final class Auth
         $id = $this->id();
         if ($id !== null) {
             $this->app->service(AuditLog::class)->record('auth.logout', 'user', $id, [], $id);
+            $key = $this->app->session()->get('sk');
+            if (is_string($key)) {
+                $this->app->service(AccountSecurityService::class)->endCurrent($key);
+            }
         }
         $this->app->session()->invalidate();
         $this->app->csrf()->rotate();

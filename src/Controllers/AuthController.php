@@ -72,6 +72,35 @@ final class AuthController extends Controller
                 'old' => ['email' => $email],
             ], 422);
         }
+        if (!empty($result['mfa'])) {
+            return $this->redirect('/login/verify');
+        }
+        return $this->afterLogin();
+    }
+
+    public function mfaForm(Request $request): Response
+    {
+        if (!$this->app->auth()->mfaPending()) {
+            return $this->redirect('/login');
+        }
+        return $this->view('auth/verify', ['title' => 'Two-step sign-in']);
+    }
+
+    public function mfa(Request $request): Response
+    {
+        $result = $this->app->auth()->completeMfa($request->input('code'));
+        if (!$result['ok']) {
+            if (!$this->app->auth()->mfaPending()) {
+                $this->flash('error', (string) $result['error']);
+                return $this->redirect('/login');
+            }
+            return $this->view('auth/verify', ['title' => 'Two-step sign-in', 'errors' => ['form' => (string) $result['error']]], 422);
+        }
+        return $this->afterLogin();
+    }
+
+    private function afterLogin(): Response
+    {
         $intended = (string) $this->app->session()->get('intended', '');
         $this->app->session()->remove('intended');
         $home = $this->app->auth()->homePath();

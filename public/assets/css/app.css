@@ -396,3 +396,5 @@
 .shift { margin-bottom: 6px; padding: 4px 8px; border-radius: 4px; background: var(--accent-wash); color: var(--pill-info-ink); font-size: var(--fs-small); }
 .shift--on_call { background: none; border: 1px dashed var(--control); color: var(--text); }
 .shift--admin, .shift--reception { background: var(--raised); color: var(--text); }
+.recovery-codes { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 8px; list-style: none; padding: 0; margin: 12px 0; }
+.recovery-codes li { margin: 0; padding: 6px 10px; border: 1px dashed var(--control); border-radius: 6px; }

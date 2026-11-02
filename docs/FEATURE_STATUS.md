@@ -76,11 +76,11 @@ Statuses: NOT STARTED, IN PROGRESS, IMPLEMENTED, TESTED, PUSHED, BLOCKED. "Tests
 
 | # | Feature | Status | Routes | Tests |
 | --- | --- | --- | --- | --- |
-| 46 | TOTP two-factor authentication | NOT STARTED | | |
-| 47 | Session dashboard | NOT STARTED | | |
-| 48 | Encrypted storage | NOT STARTED | | |
-| 49 | Retention and deletion | NOT STARTED | | |
-| 50 | Security alerts | NOT STARTED | | |
+| 46 | TOTP two-factor authentication | PUSHED | `/account/security`, `/login/verify` | SecurityFeaturesTest::testTotpMatchesRfc6238, testTwoStepSignInWithReplayProtectionAndRecoveryCodes |
+| 47 | Session dashboard | PUSHED | `/account/security` (sessions) | SecurityFeaturesTest::testSessionsCanBeEndedRemotelyAndNewDevicesRaiseAnAlert |
+| 48 | Encrypted storage | PUSHED | vault files, TOTP secrets, backups (`src/Support/Crypto.php`) | SecurityFeaturesTest::testEncryptionIsBoundToItsPurposeAndDetectsTampering, PatientPlatformTest, AdministrationTest |
+| 49 | Retention and deletion | PUSHED | `/admin/retention`, `/account/security` (deletion), `bin/retention.php` | SecurityFeaturesTest::testRetentionPurgesOperationalRecordsOnly, testDeletionRemovesPersonalContentAndKeepsClinicalRecords |
+| 50 | Security alerts | PUSHED | notifications of type `security` | SecurityFeaturesTest::testSessionsCanBeEndedRemotelyAndNewDevicesRaiseAnAlert, testRepeatedFailedSignInsWarnTheAccountOwner |
 
 ## Advanced
 

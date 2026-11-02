@@ -43,6 +43,13 @@ final class RateLimiter
         return (int) $row['hits'] >= $max;
     }
 
+    /** Hits in the current window (0 once it has ended). */
+    public function hits(string $bucket): int
+    {
+        $row = $this->db->one('SELECT hits, window_ends_at FROM rate_limits WHERE bucket = :b', ['b' => substr(hash('sha256', $bucket), 0, 64)]);
+        return $row === null || $row['window_ends_at'] <= $this->clock->nowSql() ? 0 : (int) $row['hits'];
+    }
+
     public function clear(string $bucket): void
     {
         $this->db->execute('DELETE FROM rate_limits WHERE bucket = :b', ['b' => substr(hash('sha256', $bucket), 0, 64)]);
