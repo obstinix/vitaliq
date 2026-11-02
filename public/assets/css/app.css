@@ -410,3 +410,7 @@
 .api-key { padding: 10px 12px; border: 1px dashed var(--control); border-radius: 6px; overflow-wrap: anywhere; user-select: all; }
 .verify-block { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: center; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border, #e1e6ea); }
 .verify-block svg { width: 96px; height: 96px; }
+
+/* Wide tables scroll inside their panel on narrow screens instead of widening the page. */
+.layout-app .panel, .layout-app .table-wrap { position: relative; min-width: 0; overflow-x: auto; }
+.layout-app .vq-sheet { overflow-x: clip; }
